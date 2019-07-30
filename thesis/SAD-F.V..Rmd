@@ -10,21 +10,87 @@ output:
 ```{r setup, include=FALSE}
 library(readxl)
 library(knitr)
+library(randomcoloR)
 source("../scripts/utils.R")
-ds <- importDataset()
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
+<!--numerazione dell'inidice-->
+\setcounter{page}{1} 		
+\pagenumbering{roman} 
+<!--\listoftables-->
+\listoffigures
+\newpage
+<!--numerazione della tesina -->
+\setcounter{page}{1} 		
+\pagenumbering{arabic} 
 # 1. Introduzione
 
-L'obiettivo del progetto è quello di analizzare e confrontare il numero di laureati fra le varie regioni italiane nell'anno 2016, i dati sono stati presi dal sito _[dati.istat](http://dati.istat.it/)_ in formato xlsx e sono stati importati in R utilizzando la funzione **read_excel**
-```{r eval=FALSE}
+L'obiettivo del progetto è quello di analizzare e confrontare il numero di laureati(delle università pubbliche) fra le varie regioni italiane nell'anno 2016, i dati sono stati presi dal sito _[dati.istat](http://dati.istat.it/)_ in formato xlsx e sono stati importati in R utilizzando la funzione **read_excel** dopodichè le informazioni delle colonne del dataset vengono salvate nelle  seguenti variabili 
+```{r}
 ds <- read_excel("../dataset/dataset.xlsx", 
                  skip = 1)
-View(ds)
 ```
 
 Una volta importato il dataset essopresenta i segenti valori  
+\begin{figure}[h]
 \begin{center}
 \includegraphics[width=350px]{../img/ds.png}
+\caption{Il dataset}
 \end{center}
+\end{figure}
+
+Per semplificare il lavoro i valori delle colonne vengono salvati all'interno delle variabili che vedere riportate di seguito
+```{r}
+#variabili
+regioni <- ds$`Regioni/Tipi di CDL`
+triennale <- ds$`corsi di laurea di I livello`
+magistrale <- ds$`corsi di laurea magistrale biennale`
+unico <- ds$`corsi di laurea magistrale a ciclo unico`
+vecchio <- ds$`corsi di laurea del vecchio ordinamento`
+```
+
+## 1.1 Calcolo dei tassi
+I valori risultano molto altalenanti, quindi potrebbero risultare difficili da rappresentare graficamente in futuro, per ovviare a questo problema si è pensato di rappresentare i dati come tasso di laureati per regione ogni mille abitanti
+```{r}
+popolazione <- c(4404000, 127329, 1571000, 10010000,
+                 1062860, 4915000, 1221000, 4448000,
+                 3744000, 891181, 1544000, 5888000, 
+                 1327000, 312027, 5851000, 4077000,
+                 573694, 1971000, 5074000, 1658000)
+tassoTriennale <- (triennale / popolazione) * 1000
+tassoMagistrale <- (magistrale / popolazione) * 1000
+tassoUnico <- (unico / popolazione) * 1000
+tassoVecchio <- (vecchio / popolazione) * 1000
+totaleTassi <- tassoTriennale + tassoMagistrale + tassoUnico + tassoVecchio
+dsTassi <- data.frame("Regioni"= regioni,
+                      "Tasso laureati triennali"=tassoTriennale,
+                      "Tasso laureati magistrali"=tassoMagistrale,
+                      "Tasso laureati a ciclo unico"=tassoUnico,
+                      "Tasso laureati vecchio ordinamento"=tassoVecchio,
+                      "Totale"= totaleTassi)
+```
+Nella vettore **popolazione** sono presenti il numero di abitanti di ogni regione italiana nell'anno 2015 dopodichè vengono calcolati i tassi per ogni tipo di laurea per ogni regione, il totale dei tassi per ogni regione e infine viene creato il dataframe dei tassi chiamato **dsTassi**. Esso si presenta così
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=450px]{../img/dsTassi.png}
+\caption{Tasso di laureati ogni mille abitanti}
+\end{center}
+\end{figure}
+
+# 2. Grafici a barre
+Per una rapida visualizzazione dei dati si è deciso di mostrare i grafici a barre dei laureati nelle varie regioni d'Italia. I grafici verranno mostrati con la funzione scritta ad hoc **showBar**
+```{r}
+showBar
+```
+essa prende in input un vettore dei tassi, i nomi delle regioni per definire le label della legenda, il nome del grafico e il numero di righe del dataframe
+```{r}
+rowTassi <- nrow(dsTassi)
+showBar(tassoTriennale, regioni, "Tassi Triennale", rowTassi)
+showBar(tassoMagistrale, regioni, "Tassi Magistrale", rowTassi)
+showBar(tassoUnico, regioni, "Tassi ciclo unico", rowTassi)
+showBar(tassoVecchio, regioni, "Tasso vecchio ordinamento", rowTassi)
+```
+
+## 2.1 Commenti sui grafici a barre
+Dai grafici si evince che
