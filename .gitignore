@@ -39,3 +39,5 @@ rsconnect/
 /thesis/*.pdf
 /thesis/*.log
 /thesis/*.tex
+# script
+commit.sh

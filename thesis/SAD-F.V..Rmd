@@ -93,4 +93,11 @@ showBar(tassoVecchio, regioni, "Tasso vecchio ordinamento", rowTassi)
 ```
 
 ## 2.1 Commenti sui grafici a barre
-Dai grafici si evince che
+### 2.1.1 Grafico dei tassi dei laureati triennali
+La regione che presenta il più alto tasso di laureati triennali ogni mille abitanti è l'Abruzzo con un tasso di laureati triennali pari all 4.5
+
+### 2.1.2 Grafico dei tassi dei laureati magistrali
+
+### 2.1.3 Grafico dei tassi dei laureati a ciclo unico
+
+### 2.1.4 Grafico dei tassi dei laureati con il vecchio ordinamento
