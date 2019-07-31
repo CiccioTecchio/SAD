@@ -83,20 +83,41 @@ Per una rapida visualizzazione dei dati si è deciso di mostrare i grafici a bar
 ```{r}
 showBar
 ```
-essa prende in input un vettore dei tassi, i nomi delle regioni per definire le label della legenda, il nome del grafico e il numero di righe del dataframe
+essa prende in input un dei vettori dei tassi, i nomi delle regioni per definire le label della legenda, il nome del grafico e il numero di righe del dataframe, i colori delle barre sono stati definiti grazie alla funzione **distinctColorPalette** della libreria **randomcoloR**.
+
+## 2.1 Grafico dei tassi dei laureati triennali
 ```{r}
 rowTassi <- nrow(dsTassi)
 showBar(tassoTriennale, regioni, "Tassi Triennale", rowTassi)
-showBar(tassoMagistrale, regioni, "Tassi Magistrale", rowTassi)
-showBar(tassoUnico, regioni, "Tassi ciclo unico", rowTassi)
-showBar(tassoVecchio, regioni, "Tasso vecchio ordinamento", rowTassi)
 ```
 
-## 2.1 Commenti sui grafici a barre
-### 2.1.1 Grafico dei tassi dei laureati triennali
+Il grafico ci dice che la regione con il più alto tasso di laureati triennali è l'Abruzzo(4.5) mentre la regione con il tasso più basso è la Basilicata(0.88).
 
-### 2.1.2 Grafico dei tassi dei laureati magistrali
+## 2.2 Grafico dei tassi dei laureati magistrali
+```{r}
+showBar(tassoMagistrale, regioni, "Tassi Magistrale", rowTassi)
+```
 
-### 2.1.3 Grafico dei tassi dei laureati a ciclo unico
+I tassi per i laureati magistrali si abbassano, questo è normale perchè bisogna considare il fatto che la popolazione resta sempre la stessa ma il numero di laureati Magistrali è molto più basso rispetto a quello dei laureati triennali.  
+Il tasso più alto viene registrato in Emilia-Romagna(2.01), l'Abruzzo che aveva il più alto tasso di laureati Triennali continua ad avere un tasso abbastanza alto pari a 1.88, il tasso più basso viene registrato dalla Valle d'Aosta con un tasso di laureati magistrali pari a 0.09.
 
-### 2.1.4 Grafico dei tassi dei laureati con il vecchio ordinamento
+## 2.3 Grafico dei tassi dei laureati a ciclo unico
+```{r}
+showBar(tassoUnico, regioni, "Tassi ciclo unico", rowTassi)
+```
+
+Anche in questo caso i tassi si abbassano ulteriormente dato che i laureati a ciclo unico per ogni regione sono molto meno rispetto a laureati Triennali e Magistrali.  
+La regione con il tasso più alto è di nuovo l'Abruzzo con 0.93 mentre la regione con il tasso più basso è la Valle d'Aosta con 0.02.
+
+## 2.4 Grafico dei tassi dei laureati con il vecchio ordinamento
+```{r}
+showBar(tassoVecchio, regioni, "Tasso vecchio ordinamento", rowTassi)
+```
+Per i laureati registramo i tassi più bassi di tutti dato che il numero di totale di laureati con il vecchio ordinamento in Italia nel 2016 è pari a 2727. La regione con il tasso più alto resta l'Abruzzo con 0.10, il tasso più basso si registra in Umbria avente un tasso pari a 0.
+
+## 2.5 Grafico dei tassi dei laureati totali
+```{r}
+showBar(totaleTassi, regioni, "Tasso di tutti i laureati", rowTassi)
+```
+
+La regione con il tasso più alto di laureati è l'Abruzzo con un tasso pari a 7.44 mentre la regione con il tasso più basso è la Basilicata con 1.49.
