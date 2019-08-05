@@ -77,19 +77,18 @@ tassoMagistrale <- (magistrale / popolazione) * 1000
 tassoUnico <- (unico / popolazione) * 1000
 tassoVecchio <- (vecchio / popolazione) * 1000
 totaleTassi <- tassoTriennale + tassoMagistrale + tassoUnico + tassoVecchio
-dsTassi <- data.frame("Regioni"= regioni,
-                      "Tasso laureati triennali"=round(tassoTriennale, digits = 3),
+dsTassi <- data.frame("Tasso laureati triennali"=round(tassoTriennale, digits = 3),
                       "Tasso laureati magistrali"=round(tassoMagistrale, digits = 3),
                       "Tasso laureati a ciclo unico"=round(tassoUnico, digits = 3),
                       "Tasso laureati vecchio ordinamento"=round(tassoVecchio, digits = 3),
                       "Totale"= round(totaleTassi,digits = 3))
+dsPopolazione <- data.frame("Popolazione"=popolazione)
+row.names(dsPopolazione) <- regioni
 row.names(dsTassi) <- regioni
 
 ```
 
-Nella vettore **popolazione** sono presenti il numero di abitanti di ogni regione italiana nell'anno 2016 dopodichè vengono calcolati i tassi per ogni tipo di laurea per ogni regione, il totale dei tassi per ogni regione e infine viene creato il dataframe dei tassi chiamato **dsTassi**.
-
-
+Nel data frame **dsPopolazione** sono presenti il numero di abitanti di ogni regione italiana nell'anno 2016; nel data frame **dsTassi** sono presenti i tassi di laureati per ogni regioni italiana per ogni tipo di laurea e anche il totale dei tassi.
 
 # 2. Grafici a barre
 Per una rapida visualizzazione dei dati si è deciso di mostrare i grafici a barre dei laureati nelle varie regioni d'Italia. I grafici verranno mostrati con la funzione scritta ad hoc **showBar**
@@ -143,7 +142,7 @@ showPareto <- function(totale, main, rows){
     #ordiniamo il dataset
     ordinato <- dsTassi[order(dsTassi$Totale, decreasing = TRUE),]
     #prendiamo le regioni ordinate
-    lbls <- ordinato$Regioni
+    lbls <- rownames(ordinato)
     #prendiamo il totale
     ordinato <- ordinato$Totale
     freqRel <- prop.table(ordinato)
@@ -168,3 +167,12 @@ Dal grafico si evince che:
 - il 75.89% dei laureati italiani è abruzzese, romagnolo, laziale, marchigiano, umbro, friulano, toscano, campano, veneto, piemontese, molisano, alto adesino, lombardo
 - il 15,55% dei laureati italiani vive nelle restanti sette regioni
 Possiamo dire che il principio di Pareto non è soddisfatto perchè l'80% dei laureati esce dal più del 50% delle università sparse per le varie regioni(invece che nel 20%).
+
+# 4. Retta di regressione
+La relazione fra due variabili quantitative può essere rappresentata graficamente con un diagramma di dispessione(anche detto scatterplot). Per poter costruire questo grafico abbiamo bisogno di individuare le due variabili da mettere in relazione, la coppia di variabili è formata da una variabile **dipendente**(posta sull'asse delle Y) e una **indipendente**(posta sull'asse delle X); ogni coppia di osservazioni viene rappresentata come un punto. Il risultato finale sarà un grafico contenente un insieme di punti attraverso il quale cerchiamo di individuare un trend.  
+La correlazione tra le variabili quantitative si ricava tramite la **covarianza** che indica quanto le due variabili variano insieme, ovvero quanto esse siano dipendenti.  
+Il **coefficiente di correlazione** ci consente di misurare la "forza" del legame fra le due variabili prese in esame.  
+Le variabili prese in esame sono:
+
+- dipendente
+- indipendente

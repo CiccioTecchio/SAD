@@ -6,7 +6,7 @@ showBar <- function(vector, lbl, main, rows, posizioneLegenda){
 
 showPareto <- function(totale, main, rows){
     ordinato <- dsTassi[order(dsTassi$Totale, decreasing = TRUE),]
-    lbls <- ordinato$Regioni
+    lbls <- rownames(ordinato)
     ordinato <- ordinato$Totale
     freqRel <- prop.table(ordinato)
     app <- data.frame(ordinato)
