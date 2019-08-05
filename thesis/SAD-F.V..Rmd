@@ -55,7 +55,17 @@ vecchio <- ds$`corsi di laurea del vecchio ordinamento`
 ```
 
 ## 1.1 Calcolo dei tassi
-I valori risultano molto altalenanti, quindi potrebbero risultare difficili da rappresentare graficamente in futuro, per ovviare a questo problema si è pensato di rappresentare i dati come tasso di laureati per regione ogni mille abitanti
+I valori risultano molto altalenanti, quindi potrebbero risultare difficili da rappresentare graficamente in futuro, per ovviare a questo problema si è pensato di rappresentare i dati come tasso di laureati per regione ogni mille abitanti, i valori sono stati poi arrotondati alle sole prime tre cifre decimale, il dataset dopo la trasformazione si presenta nel seguente modo:
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=450px]{../img/dsTassi.png}
+\caption{Tasso di laureati ogni mille abitanti}
+\end{center}
+\end{figure}
+
+I valori sono stati calcolati utilizzando i seguenti comandi:
+
 ```{r}
 popolazione <- c(4404000, 127329, 1571000, 10010000,
                  1062860, 4915000, 1221000, 4448000,
@@ -68,22 +78,18 @@ tassoUnico <- (unico / popolazione) * 1000
 tassoVecchio <- (vecchio / popolazione) * 1000
 totaleTassi <- tassoTriennale + tassoMagistrale + tassoUnico + tassoVecchio
 dsTassi <- data.frame("Regioni"= regioni,
-                      "Tasso laureati triennali"=tassoTriennale,
-                      "Tasso laureati magistrali"=tassoMagistrale,
-                      "Tasso laureati a ciclo unico"=tassoUnico,
-                      "Tasso laureati vecchio ordinamento"=tassoVecchio,
-                      "Totale"= totaleTassi)
+                      "Tasso laureati triennali"=round(tassoTriennale, digits = 3),
+                      "Tasso laureati magistrali"=round(tassoMagistrale, digits = 3),
+                      "Tasso laureati a ciclo unico"=round(tassoUnico, digits = 3),
+                      "Tasso laureati vecchio ordinamento"=round(tassoVecchio, digits = 3),
+                      "Totale"= round(totaleTassi,digits = 3))
 row.names(dsTassi) <- regioni
 
 ```
-Nella vettore **popolazione** sono presenti il numero di abitanti di ogni regione italiana nell'anno 2015 dopodichè vengono calcolati i tassi per ogni tipo di laurea per ogni regione, il totale dei tassi per ogni regione e infine viene creato il dataframe dei tassi chiamato **dsTassi**. Esso si presenta così
 
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=450px]{../img/dsTassi.png}
-\caption{Tasso di laureati ogni mille abitanti}
-\end{center}
-\end{figure}
+Nella vettore **popolazione** sono presenti il numero di abitanti di ogni regione italiana nell'anno 2016 dopodichè vengono calcolati i tassi per ogni tipo di laurea per ogni regione, il totale dei tassi per ogni regione e infine viene creato il dataframe dei tassi chiamato **dsTassi**.
+
+
 
 # 2. Grafici a barre
 Per una rapida visualizzazione dei dati si è deciso di mostrare i grafici a barre dei laureati nelle varie regioni d'Italia. I grafici verranno mostrati con la funzione scritta ad hoc **showBar**
