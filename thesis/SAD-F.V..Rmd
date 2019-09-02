@@ -39,7 +39,7 @@ Una volta importato il dataset essopresenta i segenti valori
 \end{center}
 \end{figure}
 
-Per semplificare il lavoro i valori delle colonne vengono salvati all'interno delle variabili che vedere riportate di seguito
+Per semplificare il lavoro i valori delle colonne vengono salvati all'interno delle variabili riportate di seguito
 ```{r}
 #variabili
 regioni <- c("Piemonte", "Valle d'Aosta", "Liguria", "Lombardia",
@@ -76,13 +76,12 @@ tassoTriennale <- (triennale / popolazione) * 1000
 tassoMagistrale <- (magistrale / popolazione) * 1000
 tassoUnico <- (unico / popolazione) * 1000
 tassoVecchio <- (vecchio / popolazione) * 1000
-totaleTassi <- tassoTriennale + tassoMagistrale + tassoUnico + tassoVecchio
 dsTassi <- data.frame("Tasso laureati triennali"=round(tassoTriennale, digits = 3),
                       "Tasso laureati magistrali"=round(tassoMagistrale, digits = 3),
                       "Tasso laureati a ciclo unico"=round(tassoUnico, digits = 3),
-                      "Tasso laureati vecchio ordinamento"=round(tassoVecchio, digits = 3),
-                      "Totale"= round(totaleTassi,digits = 3))
-dsPopolazione <- data.frame("Popolazione"=popolazione)
+                      "Tasso laureati vecchio ordinamento"=round(tassoVecchio, digits = 3)
+                     )
+dsPopolazione <- data.frame("Popolazione"= popolazione)
 row.names(dsPopolazione) <- regioni
 row.names(dsTassi) <- regioni
 
@@ -127,13 +126,6 @@ showBar(tassoVecchio, regioni, "Tasso vecchio ordinamento", rowTassi, "topright"
 ```
 Per i laureati registramo i tassi più bassi di tutti dato che il numero di totale di laureati con il vecchio ordinamento in Italia nel 2016 è pari a 2727. La regione con il tasso più alto resta l'Abruzzo con 0.10, il tasso più basso si registra in Umbria avente un tasso pari a 0.
 
-## 2.5 Grafico dei tassi dei laureati totali
-```{r}
-showBar(totaleTassi, regioni, "Tasso di tutti i laureati", rowTassi, "topleft")
-```
-
-La regione con il tasso più alto di laureati è l'Abruzzo con un tasso pari a 7.44 mentre la regione con il tasso più basso è la Basilicata con 1.49.
-
 # 3. Diagramma di Pareto
 La legge del Principio di Pareto(Legge dell'80/20) afferma che _"la maggior parte degli effetti dipendono da un numero ristretto di cause"_. Per costruire il diagramma di Pareto occorre classificare i dati, ordinarli, disegnare un grafico a barre, aggiungere la linea cumulativa e aggiungere le informazioni di base.  
 Come dati da classificare è stato scelto il totale dei tassi di laureti italiani, di seguito viene mostrata la funzione utilizzata per costruire il diagramma.
@@ -174,5 +166,5 @@ La correlazione tra le variabili quantitative si ricava tramite la **covarianza*
 Il **coefficiente di correlazione** ci consente di misurare la "forza" del legame fra le due variabili prese in esame.  
 Le variabili prese in esame sono:
 
-- dipendente
-- indipendente
+- totale laureati dipendente
+- popolazione per regione indipendente
