@@ -184,9 +184,34 @@ Il modello di regressione lineare semplice è esprimibile attraverso l'equazione
 L'equazione della retta è:
 $$Y =  \alpha + \beta X$$
 Dove alpha è l'**intercetta** e beta il **coefficiente angolare**.  
-L'intercetta corrisponde all'ordinata del punto di intersezione tra la retta interpolante e l'asse delle ordinate. Il coefficiente angolare indica la pendenza della retta un coefficiente positivo indica una retta crescente, mentre, un coefficiente angolare negativo indica una retta descrescente.  
-Costruzione del modello di regressione lineare semplice:
+L'intercetta corrisponde all'ordinata del punto di intersezione tra la retta interpolante e l'asse delle ordinate. Il coefficiente angolare indica la pendenza della retta un coefficiente positivo indica una retta crescente, mentre, un coefficiente angolare negativo indica una retta descrescente. 
+
+## 4.2 Costruzione del modello di regressione lineare semplice
 ```{r echo=TRUE, eval=TRUE}
-lm(tassoTriennale~tassoMagistrale)
+slr <- lm(tassoTriennale~tassoMagistrale)
+print(slr)
 ```
-Possiamo notare che il coefficiente angolare è positivo quindi avremo una retta crescente
+Possiamo notare che il coefficiente angolare è positivo quindi avremo una retta crescente.  
+Di seguito viene mostrato lo script fatto per mostrare lo scatterplot della retta di regressione, per una migliore visualizzazione i dati riguardanti i tassi triennali e magistrali sono stati scalati utilizzando la funzione **scale()**.
+```{r echo=TRUE, eval=TRUE}
+scaleTriennale <- scale(tassoTriennale)
+scaleMagistrale <- scale(tassoMagistrale)
+modelloScalato <- lm(scaleTriennale~scaleMagistrale)
+plot(scaleTriennale, scaleMagistrale, main= "Retta di regressione", xlab="tasso Triennale",
+ylab = "tasso Magistrale", col="red")
+abline(modelloScalato)
+stime <- fitted(modelloScalato)
+segments(scaleTriennale, stime, scaleTriennale, scaleMagistrale, col="magenta")
+text(x=scaleTriennale, y=scaleMagistrale, label = regioni, cex = 0.6)
+```
+
+Dal grafico si evince che il campione è positivamente correlato in quanto abbiamo una retta interpolante crescente e che avendo una covarianza positiva ma non di molto i segmenti non presentano sempre la stessa distanza.
+
+## 4.3 Grafico dei residui
+Con l'analisi dei residui effettuiamo una analisi più accurata sul come la retta interpola i dati e di come i residui si dispongono intorno alla retta interpolante influenzandone la posizione. I residui sono posti sulle ordinate mentre e i valori della variabile indipendente sono disposti sull'asse delle ascisse.
+```{r echo=TRUE, eval=TRUE}
+residui<-(resid(slr))
+plot(tassoMagistrale, residui, main = "Grafico dei residui", xlab = "Tasso Magistrale", ylab = "Residui", col= "red")
+text(x= tassoMagistrale, y=residui+0.05, labels = regioni, cex=0.6)
+abline(h=0, col="blue", lty=2)
+```
