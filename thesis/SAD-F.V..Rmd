@@ -166,5 +166,27 @@ La correlazione tra le variabili quantitative si ricava tramite la **covarianza*
 Il **coefficiente di correlazione** ci consente di misurare la "forza" del legame fra le due variabili prese in esame.  
 Le variabili prese in esame sono:
 
-- totale laureati dipendente
-- popolazione per regione indipendente
+- tasso di laureati magistrali dipendente
+- tasso di laureati triennali indipendente
+
+Le due variabili presentano una **covarianza** pari a 
+```{r echo=TRUE, eval=TRUE}
+cov(tassoTriennale, tassoMagistrale)
+```
+e un **coefficiente di correlazione** pari a 
+```{r echo=TRUE, eval=TRUE}
+cor(tassoTriennale, tassoMagistrale)
+```
+Possiamo notare che la covarianza è positiva quindi possiamo dire che i valori delle due variabili sono correlati e che tendono a variare insieme, anche il coefficiente di correlazione è positivo e assume un valore molto prossimo ad 1 questo ci da una ulteriore conferma della bontà di questo legame.
+
+## 4.1 Regressione lineare semplice
+Il modello di regressione lineare semplice è esprimibile attraverso l'equazione di una retta tale da riuscire a interpolare i punti della nuvola dello scatterplot meglio di tutte le altre rette possibili.  
+L'equazione della retta è:
+$$Y =  \alpha + \beta X$$
+Dove alpha è l'**intercetta** e beta il **coefficiente angolare**.  
+L'intercetta corrisponde all'ordinata del punto di intersezione tra la retta interpolante e l'asse delle ordinate. Il coefficiente angolare indica la pendenza della retta un coefficiente positivo indica una retta crescente, mentre, un coefficiente angolare negativo indica una retta descrescente.  
+Costruzione del modello di regressione lineare semplice:
+```{r echo=TRUE, eval=TRUE}
+lm(tassoTriennale~tassoMagistrale)
+```
+Possiamo notare che il coefficiente angolare è positivo quindi avremo una retta crescente
