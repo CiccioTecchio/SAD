@@ -41,3 +41,4 @@ rsconnect/
 /thesis/*.tex
 # script
 commit.sh
+img/.DS_Store

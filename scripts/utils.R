@@ -16,3 +16,9 @@ showPareto <- function(totale, main, rows){
     lines(x, cumsum(freqRel), type = "b", pch=16)
     text(x-0.2, cumsum(freqRel) + 0.03, paste(format(cumsum(freqRel)*100, digits = 3), "%"))
 }
+
+showBoxPlot <- function(label, tasso, name, title, color, lim){
+    boxplot.with.outlier.label(label_name = label, tasso,
+    names=c(name), main=title, horizontal = TRUE,
+    col= color, pars=list(ylim=c(0,lim)))
+}

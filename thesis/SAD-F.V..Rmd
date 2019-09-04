@@ -11,7 +11,11 @@ output:
 library(readxl)
 library(knitr)
 library(randomcoloR)
+library(plyr)
+library(TeachingDemos)
 source("../scripts/utils.R")
+source("https://raw.githubusercontent.com/talgalili/R-code-snippets/master/boxplot.with.outlier.label.r")
+
 knitr::opts_chunk$set(echo = TRUE)
 ```
 <!--numerazione dell'inidice-->
@@ -208,10 +212,98 @@ text(x=scaleTriennale, y=scaleMagistrale, label = regioni, cex = 0.6)
 Dal grafico si evince che il campione è positivamente correlato in quanto abbiamo una retta interpolante crescente e che avendo una covarianza positiva ma non di molto i segmenti non presentano sempre la stessa distanza.
 
 ## 4.3 Grafico dei residui
-Con l'analisi dei residui effettuiamo una analisi più accurata sul come la retta interpola i dati e di come i residui si dispongono intorno alla retta interpolante influenzandone la posizione. I residui sono posti sulle ordinate mentre e i valori della variabile indipendente sono disposti sull'asse delle ascisse.
+Con l'analisi dei residui effettuiamo una analisi più accurata sul come la retta interpola i dati e di come i residui si dispongono intorno alla retta interpolante influenzandone la posizione. I residui sono posti sulle ordinate mentre e i valori della variabile indipendente sono disposti sull'asse delle ascisse.  
+Come prima cosa vengono calcolati i residui del modello con la funzione **resid()** dopodichè viene stampato il grafico dei residui
 ```{r echo=TRUE, eval=TRUE}
 residui<-(resid(slr))
-plot(tassoMagistrale, residui, main = "Grafico dei residui", xlab = "Tasso Magistrale", ylab = "Residui", col= "red")
+plot(tassoMagistrale, residui, main = "Grafico dei residui", xlab = "Tasso Magistrale",
+ylab = "Residui", col= "red")
 text(x= tassoMagistrale, y=residui+0.05, labels = regioni, cex=0.6)
 abline(h=0, col="blue", lty=2)
 ```
+
+# 5. Statistica descrcittiva
+
+## 5.1 Quantile
+La funzione **quantile()** è utile per analizzare un campione di dati, essa restituisce cinque valori:
+
+- Q0 valore minimo dei dati
+- Q1 primo quantile, questo valore corrisponde al dato per il quale il 25% dei dati risultano alla sinistra del valore e il 75% risulta a destra
+- Q2 secondo quantile, questo valore corrisponde al dato per il quale il 50% dei dati risultano alla sinistra del valore e il 50% risulta a destra; questo valore viene anche chiamato **mediana**
+- Q3 terzo quantile, questo valore corrisponde al dato per il quale il 75% dei dati risultano alla sinistra del valore e il 25% risulta a destra
+- Q4 valore massimo dei dati
+
+## 5.2 Calcolo dei quantili
+In questo paragrafo verranno calcolati i quantili per le varie colonne del dataset dei tassi, i valori percentiali corrispondono ai seguenti quantili:
+
+- 0% sta a Q0
+- 25% sta a Q1
+- 50% sta a Q2
+- 75% sta a Q3
+- 100% sta a Q4
+
+```{r echo = TRUE, eval = TRUE}
+quantile(tassoTriennale)
+quantile(tassoMagistrale)
+quantile(tassoUnico)
+quantile(tassoVecchio)
+```
+
+## 5.3 Boxplot
+Con il boxplot andiamo a rappresentare graficamente quanto è stato calcolato con in quantili. La rappresentazione grafica corrisponde ad una scatola i cui estremi corrispondono a Q1 e Q3, e da una linea centrale che rappresenta Q2, in alto e in basso sono presenti due linee orizzontali dette "baffi".  
+Il baffo inferiore corrisponde al valore più piccolo delle osservazioni Q0
+$$Q_0 >= Q_1-1.5*(Q_3-Q_1)$$
+il baffo superiore corrisponde al valore più alto delle osservazioni(Q4) 
+$$Q_4 <= Q_3+1.5*(Q_3-Q_1)$$
+Se tutti i dati rientrano nell'intervallo
+$$ Q_1-1.5*(Q_3-Q_1) <= x <= Q_3+1.5*(Q_3-Q_1)$$
+allora i baffi saranno posti in corrispondenza del valore minimo e del valore massimo del campione, se invece sono presenti valori al di fuori dell'intervallo questi verranno considerati come valori anomomali(**outlier**) i valori anomali vanno comunque analizzati per capire da cosa è stato scaturito quel valore anomalo.
+Il boxplot può essere utilizzato anche per esaminare altre caratteristiche della distribuzione quali:
+
+- **centralità** espressa come mediana
+- **forma** la forma che può assumere può essere simmatrica o asimmetrica essa può essere dedotta esaminando le distanza tra il primo e il terzo quartile
+- **dispersione** possiamo dedurre la dispersione esaminando la distanza che passa da Q1 a Q3  
+
+Per mostrare i boxplot è stata sviluppata la funzione **showBarPlot**
+```{r, eval=FALSE}
+showBoxPlot <- function(label, tasso, name, title, color, lim){
+    boxplot.with.outlier.label(label_name = label, tasso,
+    names=c(name), main=title,
+    col= color, pars=list(ylim=c(0,lim)))
+}
+#esempio di chiamata della funzione
+showBoxPlot(regioni, tassoTriennale, "Tasso Triennale",
+            "Boxplot tasso laureati triennali", "green", 5)
+showBoxPlot(regioni, tassoMagistrale, "Tasso Magistrale",
+            "Boxplot tasso laureati magistrali", "yellow", 3)
+showBoxPlot(regioni, tassoUnico, "Tasso Ciclo Unico",
+            "Boxplot tasso laureati ciclo unico", "blue", 2)
+showBoxPlot(regioni, tassoVecchio, "Tasso Vecchio Ordinamento",
+            "Boxplot tasso laureati vecchio ordinamento", "purple", 0.3)
+```
+
+La funzione showBar per disegnare i boxplot con le label usa la funziona **boxplot.with.outlier.label** presa da __\href{https://raw.githubusercontent.com/talgalili/R-code-snippets/master/boxplot.with.outlier.label.r}{questo repository}__.  
+Showbar prende in input:
+
+* le label che sarebbero le regioni,
+* la colonna dei tassi,
+* il nome della colonna,
+* titolo da dare al boxplot,
+* colore del box,
+* lunghezza dell'asse y
+
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics{../img/boxplot.png}
+\caption{Boxplot dei laureati}
+\end{center}
+\end{figure}
+
+## 5.4 Analisi del boxplot
+Analizzando il boxplot possiamo arrivare alle seguenti conclusioni:
+
+* l'unico outlier è presente nella colonna dei tassi triennali ed è la regione Abruzzo con 4.5
+* i dati risultano avare una maggiore dispersione nella colonna dei laureati triennali
+* possiamo notare la compattezza dei dati relativi alle colonne del tasso dei laureati a ciclo unico e del tasso dei laureati con vecchio ordinamento
+* per i laureati magistrali la maggior parte dei dati si trova alla sinistra della mediana
