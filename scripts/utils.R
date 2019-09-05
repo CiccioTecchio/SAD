@@ -22,3 +22,31 @@ showBoxPlot <- function(label, tasso, name, title, color, lim){
     names=c(name), main=title, horizontal = TRUE,
     col= color, pars=list(ylim=c(0,lim)))
 }
+
+mykm <- function(ds, k, iter){
+    #scelta dei centroidi
+    d <- dist(ds, method="euclidean", diag=TRUE, upper = TRUE)
+    tree <- hclust(d^2, method = "centroid")
+    
+    cut <- cutree(tree, k = k, h = NULL)
+    cutList <- list(cut)
+    
+    initialCentroid <- aggregate(ds, cutList, mean)[, -1]
+    print(initialCentroid)
+    
+    km <- kmeans(ds, centers = initialCentroid, iter.max = iter)
+    print(km)
+    plot(dsTassi[1:2], main=paste("K-means con k =",k))
+    points(km$center, col= 1:10, pch=8, cex=2)
+}
+
+buildClusterTable <- function(clusterNum, bt){
+    tableK <- data.frame("Tipo" = c("k-means","gerarchico", "", "", "", ""), 
+                          "Cluster" = rep(clusterNum,6),
+                          "Distanza"= rep("Euclidea", 6),
+                          "Aggregazione" = c("Centroide", "Singolo", "Completo", "Medio", "Centroide", "Mediana"), 
+                          "B/T"= bt)
+    #stampare la tabella
+    #kable(buildClusterTable(2, c(valori di bt)))
+    return(tableK)
+}

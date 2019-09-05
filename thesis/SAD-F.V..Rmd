@@ -307,3 +307,62 @@ Analizzando il boxplot possiamo arrivare alle seguenti conclusioni:
 * i dati risultano avare una maggiore dispersione nella colonna dei laureati triennali
 * possiamo notare la compattezza dei dati relativi alle colonne del tasso dei laureati a ciclo unico e del tasso dei laureati con vecchio ordinamento
 * per i laureati magistrali la maggior parte dei dati si trova alla sinistra della mediana
+
+# 6. Analisi dei cluster
+L'analisi dei cluster è una metodologia che permette di raggruppare un campio ampio vari sottoinsiemi più piccoli detti cluster. L'obettivo di questa analisi è quello di **raggruppare** fra loro elementi simili.
+
+## 6.1 Costruizione 
+Abbiamo detto che raggruppiamo in base alla **somiglianza** degli elementi, per calcolare questa somiglianza applichiamo i metodi delle distanze. Le distanze tra tutte le possibili coppie di unità vengono inserite in una matrice simmetrica _D_ di cardinalità _n x n_. Il metodo che che utilizzero per calcolare le distanze è quello della **metrica Euclidea**.  
+Avendo definito come misurare la distanza andiamo a definire come raggruppare le unità osservate, esistono tre metodi per il raggruppamento:
+
+1. Eunumerazione completa
+2. Metodi gerarchici
+3. Metodi non gerarchici
+
+L'**enumerazione completa** è molto onerosa dal punto di vista computazionale, in quanto questo metodo cerca di ottimizzare(minimizzare) una fissata funzione obiettivo per ogni possibile partizione delgi individui all'interno di un cluster.  
+I **metodi gerarchici** possono essere di due tipi **agglomerativi** o **divisivi**, i tipi agglomerativi partono da una situazione in cui ci sono _n_ cluster distinti con cardinalità pari a uno, per arrivare a un solo cluster con cardinalità _n_. Invece i metodi divisi fanno l'inverso dei metodi agglomerativi, ovvero, partono da un unico cluster con cardinalità _n_ per arrivare ad _n_ cluster con cardinalità 1.  
+L'obiettivo dei metodi gerarchi è arrivare alla costruzione di un **dendrogramma** ovvero in grafico ad albero che rappresenta la sequenza delle partizioni. Il dendrogramma riporta sull'ordinata i livelli di distanza e sulle ascisse i signoli elementi, questa rappresentazione consente di farci capire rapidamente i livelli di distanza fra gli elementi.  
+I **metodi non gerarchici** permettono di riallocare gli elementi già classificati in un precedente livello di analisi.
+
+## 6.2 Calcolo delle misure di non omogeneità interna e totale
+Le misure di non omogeneità ci servono per calcolare quanti gli elementi siano distinti fra loro, esse vanno calcolate sia all'interno del sigolo cluster sia tra due cluster distinti. Una volta calcolate le misure saremo in grado di dire che gli elementi appartenti allo stesso cluster sono quanto più possibile omogenei fra loro a differenza di due(o più) elementi appartenti a due(o più) cluster distinti.  
+Gli individui vanno scelti in modo tale da minimizzare le misure di non omogeneità all'interno dei cluster(within) e da massimizzare la misura di non omogeneità tra gruppi distinti(between).  
+Questo calcolo va effettuato sia per i metodi gerarchici sia per i metodi non gerarchici e corrisponde al _rapporto fra la somma dei quadrati degli elementi sotto la diagonale principale della matrice delle distanze e il numero degli individui_
+
+## 6.3 Cluster con metodi non gerarchici: k-means
+Il metodo non gerachico k-means richiede che il numero di cluster venga specificato a priori e da in output un unica partizione. Per garantire la convergenza del metodo iterativo si considera la matrice contenete i quadrati delle distanze euclidee.  
+Vantaggi del k-means:  
+
+* rapidità nei calcoli
+* gli elementi hanno la possibilità di raggrupparsi o allontanarsi
+
+Fra gli svantaggi c'è il fatto che la classificazione finale può essere influenzata da:
+
+* ordine in cui sono stati presi i vettori
+* proprietà geometriche dei vettori delle misure
+* scelta iniziale dei _k_ vettori
+* possibile convergenza versono un **ottimo locale** ciò implica che considerando un insieme di partenza diverso si più giungere a una diversa partizione finale.
+
+### 6.3.1 Implementazione k-means
+Il metodo k-means è stato implementato con la funzione **mykm** che vado a mostrare di seguito
+```{r, echo=FALSE, eval=TRUE}
+print(mykm)
+```
+
+La funzione prende in input un dataframe(**ds**), il numero di cluster(**k**) e il numero di iterazioni da svolgere(**iter**) sceglie i centroidi come punto di riferimento e rappresenta graficamente i cluster.
+Il dataframe dato in input corrisponde alle prime due colonne del dataset dei tassi dei laureati quindi al tasso di laureati triennali e magistrali, il numero di cluster va da 2 a 5, e le iterazioni sono sempre 10.
+
+```{r, echo=TRUE, eval=TRUE}
+mykm(dsTassi[1:2], 2, 10)
+
+mykm(dsTassi[1:2], 3, 10)
+
+mykm(dsTassi[1:2], 4, 10)
+
+mykm(dsTassi[1:2], 5, 10)
+```
+
+## 6.4 Osservazioni finali
+I valori di non omogeneità migliori si ottengo nella partizionamento con k = 4 e k = 5 infatti i loro valori sono rispettivamente 87.0% e 90.9%, si è decisio di fermarsi con la divisione in cluster con un k = 5 in quanto già l'output del k-means con 5 cluster ci mostara un alto grado di non omogeneità pari al 90.9% ma possiamo notare(sia con k=4 che con k=5) che ci sono dei cluster molto piccoli composti da uno e due elementi e quindi l'utilità del cluster si va a perdere. Quindi si è deciso di prendere in esame le partizioni con 2 e 3 cluster che hanno come valore di non omogeneità rispettivamente 55.6% e 73.1% le misure ottenute da questi due tipi di partizionamento verranno poi confrontate con le misure ottenute dai metodi gerarchici.
+
+## 6.5 Metodi gerarchici
