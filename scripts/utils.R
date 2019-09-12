@@ -40,12 +40,60 @@ mykm <- function(ds, k, iter){
     points(km$center, col= 1:10, pch=8, cex=2)
 }
 
-buildClusterTable <- function(clusterNum, bt){
+metodiGerarchici <- function(ds, labels, numCluster, mtd, title){
+    d = dist(ds, method = "euclidean", diag = TRUE, upper = TRUE)
+    hls = hclust(d, method = mtd)
+    
+    if(mtd %in% c("centroid", "median")){
+        d = d ^ 2
+    }
+    #str(hls)
+    
+    #dengrogramma
+    plot(hls, hang=-1, xlab= title)
+    axis(side = 4, at = round(c(0, hls$height),2))
+    
+    rect.hclust(hls, k=numCluster, border="red")
+    cut = cutree(hls, k=numCluster, h=NULL)
+    cutList = list(cut)
+    numberCut = table(cut)
+    #print(cutList)
+    
+    agmean = aggregate(ds, cutList, mean)[, -1]
+    
+    plot(ds)
+    points(agmean, col=1:2, pch=8, cex=1)
+
+    n = nrow(ds)
+    #print(n)
+    # total omogenity
+    totHomogenity = (n-1)*sum(apply(ds, 2, var))
+    #print(totHomogenity)
+    #between
+    within = 0
+    clusterHomogeneity = vector(length = numCluster)
+    for(i in 1:numCluster){
+        value = (numberCut[[i]] - 1) * sum(agmean[i, ])
+        clusterHomogeneity[i] = value
+        #print(value)
+        if(!is.na(value)){
+            within = within + value
+        }
+    }
+    between = totHomogenity - within
+    betweenTotal = (between / totHomogenity)
+    #print(c("Between Total", betweenTotal))
+    #print(paste("Between Total", betweenTotal))
+    betweenTotal = paste(round(betweenTotal, digits = 2), "%", sep = "")
+    return(betweenTotal)
+}
+
+buildClusterTable <- function(clusterNum){
     tableK <- data.frame("Tipo" = c("k-means","gerarchico", "", "", "", ""), 
                           "Cluster" = rep(clusterNum,6),
                           "Distanza"= rep("Euclidea", 6),
                           "Aggregazione" = c("Centroide", "Singolo", "Completo", "Medio", "Centroide", "Mediana"), 
-                          "B/T"= bt)
+                          "B/T"= rep(0, 6))
     #stampare la tabella
     #kable(buildClusterTable(2, c(valori di bt)))
     return(tableK)

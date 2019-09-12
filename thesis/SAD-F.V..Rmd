@@ -14,6 +14,7 @@ library(randomcoloR)
 library(plyr)
 library(TeachingDemos)
 source("../scripts/utils.R")
+source("../scripts/nonOmo.R")
 source("https://raw.githubusercontent.com/talgalili/R-code-snippets/master/boxplot.with.outlier.label.r")
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -366,3 +367,247 @@ mykm(dsTassi[1:2], 5, 10)
 I valori di non omogeneità migliori si ottengo nella partizionamento con k = 4 e k = 5 infatti i loro valori sono rispettivamente 87.0% e 90.9%, si è decisio di fermarsi con la divisione in cluster con un k = 5 in quanto già l'output del k-means con 5 cluster ci mostara un alto grado di non omogeneità pari al 90.9% ma possiamo notare(sia con k=4 che con k=5) che ci sono dei cluster molto piccoli composti da uno e due elementi e quindi l'utilità del cluster si va a perdere. Quindi si è deciso di prendere in esame le partizioni con 2 e 3 cluster che hanno come valore di non omogeneità rispettivamente 55.6% e 73.1% le misure ottenute da questi due tipi di partizionamento verranno poi confrontate con le misure ottenute dai metodi gerarchici.
 
 ## 6.5 Metodi gerarchici
+I metodi gerarchici sono di cinque tipi di:
+
+* singolo
+* completo
+* medio
+* centroide
+* mediana
+
+I metodi del centroide e della mediana non calcolano la matrice della distanza partendo dalle distanze precedenti ma dai baricentri dei cluster.
+L'applicazione dei metodi gerarchici verrà svolta applicando la distanza euclidea, ogni metodo gerarchico viene calcolato dividendo i dati prima in due e poi in tre cluster in modo tale da poter confrontare i rusiltati ottenuti con il risultato del metodo non gerarchico k-means.
+
+## 6.5.1 Metodo del legame singolo
+Con questo metodo la distanza fra il gruppo $G_1$(contenente $n_1$ individui) e il gruppo $G_2$(contenente $n_2$ individui) viene definita come la minima distanza fra tutte le $n_1n_2$ distanze calcolabili fra ogni individuo di $G_1$ e ogni individuo di $G_2$.  
+Inizialmente consideriamo un insieme di cluster, in seguito si cerca nella matrice delle distanze il coefficiente di distanza minima e si raggruppano gli individui nello stasso cluster.  
+Se due individui riusultano simili verrà costruito un cluster con questi due elementi se gli elementi simili sono più di due verrà effettuata una scelta casuale e si procederà alla creazione di una nuova matrice. Questo processo verrà ripetuto fin quando sarà possibile aggiungere individui al cluster.  
+**Vantaggi**: risulta più facile individuare gruppi di qualsiasi forma ed è più facile mettere in evidenza valori anomali
+**Svantaggi**: si possono trovare nello stesso cluster individui non simili
+
+```{r echo=FALSE}
+cluster2Table <- buildClusterTable(2)
+cluster2Table$B.T[1] <- "55.6%"
+cluster3Table <- buildClusterTable(3)
+cluster3Table$B.T[1] <- "73.1%"
+
+#metodo del legame singolo 2 cluster
+btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "single", "Metodo del legame singolo")
+cluster2Table$B.T[2] <- btwTot
+print(paste("BetweenTotal =",btwTot))
+
+#metodo del legame singolo 3 cluster
+btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "single", "Metodo del legame singolo")
+cluster3Table$B.T[2] <- btwTot
+print(paste("BetweenTotal =",btwTot))
+```
+
+## 6.5.2 Metodo del legame completo
+
+```{r echo=FALSE}
+#metodo del legame completo 2 cluster
+btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "complete", "Metodo del legame completo")
+cluster2Table$B.T[3] <- btwTot
+print(paste("BetweenTotal =",btwTot))
+
+#metodo del legame completo 3 cluster
+btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "complete", "Metodo del legame completo")
+cluster3Table$B.T[3] <- btwTot
+print(paste("BetweenTotal =",btwTot))
+```
+
+## 6.5.3 Metodo del legame medio
+
+```{r echo=FALSE}
+#metodo del legame medio 2 cluster
+btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "average", "Metodo del legame medio")
+cluster2Table$B.T[4] <- btwTot
+print(paste("BetweenTotal =",btwTot))
+
+#metodo del legame medio 3 cluster
+btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "average", "Metodo del legame medio")
+cluster3Table$B.T[4] <- btwTot
+print(paste("BetweenTotal =",btwTot))
+```
+
+## 6.5.4 Metodo del centroide
+
+```{r echo=FALSE}
+#metodo del centroide 2 cluster
+btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "centroid", "Metodo del centroide")
+cluster2Table$B.T[5] <- btwTot
+print(paste("BetweenTotal =",btwTot))
+
+#metodo del centroide 3 cluster
+btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "centroid", "Metodo del centroide")
+cluster3Table$B.T[5] <- btwTot
+print(paste("BetweenTotal =",btwTot))
+```
+
+## 6.5.4 Metodo della mediana
+
+```{r echo=FALSE}
+#metodo del centroide 2 cluster
+btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "median", "Metodo della mediana")
+cluster2Table$B.T[6] <- btwTot
+print(paste("BetweenTotal =", btwTot))
+
+#metodo del centroide 3 cluster
+btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "median", "Metodo del centroide")
+cluster3Table$B.T[6] <- btwTot
+print(paste("BetweenTotal =", btwTot))
+```
+
+## 6.6 Tabelle riassuntive
+
+```{r echo=FALSE}
+kable(cluster2Table)
+kable(cluster3Table)
+```
+
+# 7. Inferenza statistica
+Una indagine statisica si effettua su una popolazione che può essere finita o infinita, le caratteristiche della popolazione possono essere ottenute osservando la totalità della popolazione oppure un sottoinsieme di essa(un campione) se ci troviamo di fronte a una popolazione infita possiamo studiare le sue caratteristiche solamente attraverso un suo campione.  
+L'inferenza statistica ha il compito di estendere le caratteristiche osservate in un un campione a tutta la popolazione, il problema dell'inferenza statistica è quello di riuscire a studiare la popolazione attraverso un parametro non noto, l'inferenza statistica si basa su due metodi di indagine essi sono **stima dei parametri** e **verifica delle ipotesi**.  
+La stima dei parametri ha lo scopo di determinare i valori non noti delle caratteristiche di una popolazione come ad esempio media, mediana, varianza ecc... dai valori delle caratteristiche ricavati possiamo effettuare due tipi di stime, la **stima puntuale** dove stimiamo un paramentro non noto usando un singolo valore reale e la **stima per intervallo** dove si cerca di individuare un limite inferiore e un limite superiore(un intervallo) entro i quali sia compreso il parametro non noto con un certo **grado di fiducia**.  
+Per quanto riguarda la verifica delle ipotesi si definisce una ipotesi se un parametro non noto del campione è accettabile.  
+Per studiare i problemi dell'inferenza statistica occorre conoscere le variabili aleatorie **discrete**(assume un numero finito di valori) o **continue**(può assumere infiniti valori nell'intevallo preso in considerazione). La variabile scelta per questo studio è la variabile aleatoria normale, essa è una variabile continua.
+
+## 7.1 Variabile aleatoria normale
+La normale costituisce una distribzione limite alla quale tendono le variabili aleatoria in opportuni casi.  
+Prenderemo in esame la tematica "**chilometri di corsa percorsi da 110 atleti durante i loro allenamenti settimanali**"\footnote{per motivi di spazio il data frame popolazioneAtleti non viene mostrato nella tesina ma può essere visto lanciando il comando \textit{View(popolazioneAtleti)}} Il campione di atleti è stato creato generato usando la funzione __rnorm()__. 
+```{r echo = TRUE, eval = FALSE }
+popolazioneAtleti <- data.frame(km = floor(rnorm(110, 24, 3)))
+#salvo i dati in un CSV
+write.table(popolazioneAtleti, file = "dataset/sample.csv", row.names = FALSE, sep = ";")
+```
+
+Per calcolare la  densità di una variabile aleatoria $X$ è data dalla seguente formula:
+$$f_X(x) = \frac{1}{\sigma \sqrt{2\pi }} exp\left \{ - \frac{(x - \mu)^2)}{2 \sigma^2} \right \}, x \epsilon \mathbb{R} (\mu \epsilon \mathbb{R}, \sigma > 0)$$
+la densità di __popolazioneAtleti__ in viene calcolata dal seguente script R
+```{r echo=FALSE, eval=TRUE}
+popolazioneAtleti <- read.csv(file="../dataset/sample.csv", header=TRUE, sep=";")
+```
+
+```{r}
+valMedio <- mean(popolazioneAtleti$km)
+stdDev <- sd(popolazioneAtleti$km)
+print(paste("Valore medio = ", round(valMedio, digits=2),
+            ", Deviazione standard =", round(stdDev, digits = 2))
+      )
+
+curve(dnorm(x, mean = valMedio, sd = stdDev), 
+      from = 13, to = 35,
+      main = "Km percorsi dai 110 atleti in una settimana di allenamento"
+      )
+abline(v=valMedio, col= "red", lwd=2, lty = 2)
+```
+
+Per calcolare la **densità** come prima cosa calcoliamo il valore medio e deviazione standard del campione, infine con la funzione __curve()__ che prende come input la densità normale del campione calcolata con la funzione __dnorm(valore medio, deviazione standard)__ e i parametri __from__ e __to__ che indicano l'intervallo del grafico, sul grafico è stata anche riportata la retta che rappresenta il valore medio, si può notare che il valore medio(23.27) coincide con massimo della curva, essendoci una deviazione standar alta(3.04) possiamo dire che al decrescere della deviazione standard la curva si appiattirà.  
+Per calcolare la **funzione di distribuzione normale** si usa la funzione __pnorm()__ di R, di seguito viene mostrata il codice per calcolare la funzione di distribuzione normale sul campione.
+```{r}
+titolo = paste("km fatti in una settimana di allenamento mu =",
+               round(valMedio, digits = 2),
+               ", sigma =", round(stdDev, digits = 2)
+               )
+curve(pnorm(x, mean = valMedio, sd = stdDev), from = 13, to = 35, main = titolo)
+abline(v=20, col= "red", lwd= 1, lty = 2)
+abline(v=28, col= "red", lwd= 1, lty = 2)
+```
+Notiamo che la funzione cresce nell'intervallo che va da 20 a 28 per poi arrivare ad 1 intorno al 29 per poi stabilizzarsi.  
+Possiamo anche calcolare i quantili del campione preso in analisi grazie alla funzione R __qnorm()__ 
+```{r}
+q <- c(0, 0.25, 0.50, 0.75, 1)
+qnorm(q, mean = valMedio, sd = stdDev)
+```
+Conclusioni: 
+
+* **25%** dei km è pari a 21.22 vicino al punto in cui la probabilità comincia a crescere
+* **50%** dei km è pari a 23.27 uguale al valore medio
+* **75%** dei km è pari a 25.32 
+
+## 7.2 Stima dei parametri non noti
+Possiamo stimare i parametri non noti con due metodi, **metodo dei momenti** **metodo della massima verosomiglianza**. Dato che vogliamo stimare i paramentri non noti di una distribuzione normale la scelta
+del metodo stimatore è indifferente perchè entrambi i metodi ci porteranno allo stesso risultato.  
+Troviamo uno stimatore per il valore medio(media campionaria)$\mu$ e uno per la varianza $\sigma^2$
+```{r}
+mu <- valMedio
+sigmaQ <- (length(popolazioneAtleti$km)-1) * var(popolazioneAtleti$km)/length(popolazioneAtleti$km)
+```
+
+```{r echo=FALSE}
+print(paste("stimatore valore medio mu =", mu, ", stimatore varianza sigma^2 =", sigmaQ))
+```
+
+## 7.3 Intervalli di confidenza
+Alla stima puntuale di un parametro non noto di un campione si preferisce un **intervallo di confidenza** entro il quale sarà presente in parametro non noto con un certo **grado di fiducia**.  
+In una distribuzione normale si cerca di individuare un intervallo di confidenza da 1 a $\infty$ per:
+
+1. $\mu$ nel caso in cui $\sigma^2$ della popolazione sia nota
+2. $\mu$ nel caso in cui $\sigma^2$ della popolazione **non** sia nota
+3. $\sigma^2$ nel caso in cui $\mu$ della popolazione sia nota
+4. $\sigma^2$ nel caso in cui $\mu$ della popolazione **non** sia nota
+
+Tutti i casi elencati in precedenza sono riassunti nel seguente grafico:
+
+```{r echo=FALSE}
+curve(dnorm(x,mean=0,sd=1),from=-3, to=3,axes=FALSE,ylim=c(0,0.5), xlab="",ylab="",main="Densità normale standard")
+text(0,0.05,expression(1-alpha))
+axis(1,c(-3,-1,0,1,3),c("",expression(-z[alpha/2]), 0,expression(z[alpha/2]),""))
+vals<-seq(-3,-1,length=100)
+x<-c(-3,vals,-1,-3)
+y<-c(0,dnorm(vals),0,0)
+polygon(x,y,density=20,angle=45)
+vals<-seq(1,3,length=100)
+x<-c(1,vals,3,1)
+y<-c(0,dnorm(vals),0,0)
+polygon(x,y,density=20,angle=45)
+abline(h=0)
+text(-1.5,0.05,expression(alpha/2))
+text(-2, 0.20, "Regione rifiuto")
+text(1.5,0.05,expression(alpha/2))
+text(2, 0.20, "Regione rifiuto")
+text(0, 0.30, "Regione accettazione")
+```
+
+## 7.3.1 Intervallo per $\mu$ con $\sigma^2$ nota
+Utilizziamo il **metodo pivotale** e consideriamo una variabile aleatoria con valore medio nullo e varianza unitaria. La variabile aleatoria standardizzata dipende dal campione scelto e dal parametro non noto $\mu$ per questo può essere interpretata come una variabile aleatoria di pivot. Applicando il metodo pivotale conosciamo il limite inferiore($\infty/2$) e la regione di accettazione($1-\infty$)
+```{r}
+#grado di confidenza
+alpha <- 1 - 0.95
+limite <- qnorm(1 - alpha/2, mean = 0, sd = 1)
+size <- length(popolazioneAtleti$km)
+r1 <- valMedio - limite * stdDev/sqrt(size)
+r2 <- valMedio + limite * stdDev/sqrt(size)
+print(paste("limite inf. =", round(-limite, digits = 2),
+            "limite sup. =", round(limite, digits = 2))
+      )
+print(paste("r1 =", round(r1, digits = 2),
+            "valore medio =", round(valMedio, digits = 2),
+            "r2 =", round(r2, digits = 2))
+      )
+```
+
+è stato assegnato un intervallo di confidenza pari a 0.95 quindi la regione di accettazione sarà di 0.95 di conseguenza la regione di rifiuto sarà di 0.25. Con la funzione __qnorm()__ sono stati calcolati i limiti inferiori e superiori della variabile aleatoria.  
+Di seguito viene riportato il grafico della deviazione standard con i valori che riguardano il nostro intervallo di confidenza. Infine è stata calcolata la **stima dell'intervallo di confidenza** i valori sono stati salvati in __r1__ e __r2__, possiamo notare che l'intervallo di stima va da 22.7 a 23.84 e che il valore medio è compreso in questo intervallo.
+```{r echo=FALSE}
+curve(dnorm(x,mean=0,sd=1),from=-3, to=3,axes=FALSE,ylim=c(0,0.5), xlab="",ylab="",main="Densità normale standard")
+text(0,0.05, 0.95)
+axis(1,c(-3,-1,0,1,3),c("", round(-limite, digits = 2), 0, round(limite, digits = 2),"")) 
+vals<-seq(-3,-1,length=100)
+x<-c(-3,vals,-1,-3)
+y<-c(0,dnorm(vals),0,0)
+polygon(x,y,density=20,angle=45)
+vals<-seq(1,3,length=100)
+x<-c(1,vals,3,1)
+y<-c(0,dnorm(vals),0,0)
+polygon(x,y,density=20,angle=45)
+text(-1.5,0.05,expression(0.05/2))
+text(-2, 0.20, "Regione rifiuto")
+text(1.5,0.05,expression(0.05/2))
+text(2, 0.20, "Regione rifiuto")
+text(0, 0.30, "Regione accettazione")
+```
+
+## 7.3.2 Intervallo per $\mu$ con non $\sigma^2$ nota
+## 7.3.3 Intervallo per $\sigma^2$ con $\mu$ nota
+## 7.3.4 Intervallo per $\sigma^2$ con non $\mu$ nota
