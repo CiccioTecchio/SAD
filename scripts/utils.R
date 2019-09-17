@@ -94,7 +94,24 @@ buildClusterTable <- function(clusterNum){
                           "Distanza"= rep("Euclidea", 6),
                           "Aggregazione" = c("Centroide", "Singolo", "Completo", "Medio", "Centroide", "Mediana"), 
                           "B/T"= rep(0, 6))
-    #stampare la tabella
-    #kable(buildClusterTable(2, c(valori di bt)))
     return(tableK)
+}
+
+plotDensita <- function(title, acc, ref, limite){
+    curve(dnorm(x,mean=0,sd=1),from=-3, to=3,axes=FALSE,ylim=c(0,0.5), xlab="",ylab="",main=title)
+    text(0,0.05, acc)
+    axis(1,c(-3,-1,0,1,3),c("", round(-limite, digits = 2), 0, round(limite, digits = 2),"")) 
+    vals<-seq(-3,-1,length=100)
+    x<-c(-3,vals,-1,-3)
+    y<-c(0,dnorm(vals),0,0)
+    polygon(x,y,density=20,angle=45)
+    vals<-seq(1,3,length=100)
+    x<-c(1,vals,3,1)
+    y<-c(0,dnorm(vals),0,0)
+    polygon(x,y,density=20,angle=45)
+    text(-1.5,0.05, paste(ref,"/2", sep=""))
+    text(-2, 0.20, "Regione rifiuto")
+    text(1.5,0.05, paste(ref,"/2", sep=""))
+    text(2, 0.20, "Regione rifiuto")
+    text(0, 0.30, "Regione accettazione")
 }

@@ -570,17 +570,19 @@ text(0, 0.30, "Regione accettazione")
 ```
 
 ## 7.3.1 Intervallo per $\mu$ con $\sigma^2$ nota
-Utilizziamo il **metodo pivotale** e consideriamo una variabile aleatoria con valore medio nullo e varianza unitaria. La variabile aleatoria standardizzata dipende dal campione scelto e dal parametro non noto $\mu$ per questo può essere interpretata come una variabile aleatoria di pivot. Applicando il metodo pivotale conosciamo il limite inferiore($\infty/2$) e la regione di accettazione($1-\infty$)
+Utilizziamo il **metodo pivotale** e consideriamo una variabile aleatoria con valore medio nullo e varianza unitaria. La variabile aleatoria standardizzata dipende dal campione scelto e dal parametro non noto $\mu$ per questo può essere interpretata come una variabile aleatoria di pivot. Applicando il metodo pivotale conosciamo il limite inferiore($\infty/2$) e la regione di accettazione($1-\infty$).  
+La variabile aleatoria che andiamo a considerare è: $$Z_n = \frac{\overline{X}_n -\mu}{\sigma / \sqrt{n}}$$
+Di seguito viene riportato lo script R per determinare l'intervallo di confidenza
 ```{r}
 #grado di confidenza
 alpha <- 1 - 0.95
 limite <- qnorm(1 - alpha/2, mean = 0, sd = 1)
 size <- length(popolazioneAtleti$km)
-r1 <- valMedio - limite * stdDev/sqrt(size)
-r2 <- valMedio + limite * stdDev/sqrt(size)
 print(paste("limite inf. =", round(-limite, digits = 2),
             "limite sup. =", round(limite, digits = 2))
       )
+r1 <- valMedio - limite * stdDev/sqrt(size)
+r2 <- valMedio + limite * stdDev/sqrt(size)
 print(paste("r1 =", round(r1, digits = 2),
             "valore medio =", round(valMedio, digits = 2),
             "r2 =", round(r2, digits = 2))
@@ -588,26 +590,115 @@ print(paste("r1 =", round(r1, digits = 2),
 ```
 
 è stato assegnato un intervallo di confidenza pari a 0.95 quindi la regione di accettazione sarà di 0.95 di conseguenza la regione di rifiuto sarà di 0.25. Con la funzione __qnorm()__ sono stati calcolati i limiti inferiori e superiori della variabile aleatoria.  
-Di seguito viene riportato il grafico della deviazione standard con i valori che riguardano il nostro intervallo di confidenza. Infine è stata calcolata la **stima dell'intervallo di confidenza** i valori sono stati salvati in __r1__ e __r2__, possiamo notare che l'intervallo di stima va da 22.7 a 23.84 e che il valore medio è compreso in questo intervallo.
+Di seguito viene riportato il grafico della densità normale standard con i valori che riguardano il nostro intervallo di confidenza. Infine è stata calcolata la **stima dell'intervallo di confidenza** i valori sono stati salvati in __r1__ e __r2__, possiamo notare che l'intervallo di stima va da 22.7 a 23.84 e che il valore medio è compreso in questo intervallo.
+
 ```{r echo=FALSE}
-curve(dnorm(x,mean=0,sd=1),from=-3, to=3,axes=FALSE,ylim=c(0,0.5), xlab="",ylab="",main="Densità normale standard")
-text(0,0.05, 0.95)
-axis(1,c(-3,-1,0,1,3),c("", round(-limite, digits = 2), 0, round(limite, digits = 2),"")) 
-vals<-seq(-3,-1,length=100)
-x<-c(-3,vals,-1,-3)
-y<-c(0,dnorm(vals),0,0)
-polygon(x,y,density=20,angle=45)
-vals<-seq(1,3,length=100)
-x<-c(1,vals,3,1)
-y<-c(0,dnorm(vals),0,0)
-polygon(x,y,density=20,angle=45)
-text(-1.5,0.05,expression(0.05/2))
-text(-2, 0.20, "Regione rifiuto")
-text(1.5,0.05,expression(0.05/2))
-text(2, 0.20, "Regione rifiuto")
-text(0, 0.30, "Regione accettazione")
+plotDensita("Densità normale standard", 0.95, 0.05, limite)
 ```
 
 ## 7.3.2 Intervallo per $\mu$ con non $\sigma^2$ nota
+Per questo studio verrà utilizzata la **densità di Student con n-1 gradi di libertà**. Anche in questo caso per determinare il valore medio possiamo utilizzare il metodo pivotale con la seguente variabile aleatoria: $$T_n = \frac{\overline{X}_n -\mu}{S_n / \sqrt{n}}$$.  
+In questo caso il calcolo dei limiti viene fatto con la funzione __qt()__ e poi possiamo andare a calcolare la regione ammissibile, di seguito viene riportato lo script per il calcolo della stima dell'intervallo in cui ricade $\mu$
+```{r}
+alpha <- 1 - 0.99
+limite <- qt(1 - alpha/2, df = size-1)
+print(paste("limite inf. =", round(-limite, digits = 2),
+            "limite sup. =", round(limite, digits = 2))
+      )
+r1 <- valMedio - limite * stdDev/sqrt(size)
+r2 <- valMedio + limite * stdDev/sqrt(size)
+print(paste("r1 =", round(r1, digits = 2),
+            "valore medio =", round(valMedio, digits = 2),
+            "r2 =", round(r2, digits = 2))
+      )
+```
+Avendo aumentato i margini di accettazione(da 0.95 a 0.99) la diretta conseguenza sarà il fatto che i margini di rifiuto saranno più bassi. La ragione di accattazione va da -2.62 a 2.62, con una grado di fiducia molto alto la stima dell'intervallo di confidenza è più ampia infatti va da 22.51 a 24.03 e anche in questo caso il valore medio ricade nell'intervallo.  
+Di seguito viene riportato il grafico della densità normale standard con i valori che riguardano il nostro intervallo di confidenza. Infine è stata calcolata la **stima dell'intervallo di confidenza** i valori sono stati salvati in __r1__ e __r2__, possiamo notare che l'intervallo di stima va da 22.51 a 24.03 e che il valore medio è compreso in questo intervallo.
+
+```{r echo=FALSE}
+plotDensita("Densità di Student con n-1 gradi di libertà", 0.99, 0.01, limite)
+```
+
 ## 7.3.3 Intervallo per $\sigma^2$ con $\mu$ nota
+Per determinare l'intervallo di confidenza per $\sigma^2$ con $\mu$ nota utilizziamo un'altra volta il metodo pivotale con la seguente variabile aleatoria di pivot
+$$V_n = \sum_{i=1}^{n}\left ( \frac{X_i - \mu}{\sigma} \right )^2$$
+Essa dipende dal campione casuale e dal parametro non noto $\sigma^2$ ed è distribuita con la legge **$\chi^2$ con n gradi di libertà**.  
+Di seguito viene mostrato lo script R per calcolare l'intervallo di confidenza
+```{r}
+varianza <- var(popolazioneAtleti$km)
+print(paste("varianza =", round(varianza, digits = 2)))
+alpha <- 1 - 0.95
+mu <- trunc(valMedio)
+confInf <- qchisq(alpha/2, df = size)
+confSup <- qchisq(1 - alpha/2, df = size)
+print(paste("limite inf.=", round(confInf, digits = 2), 
+            "limite sup.=", round(confSup, digits = 2)))
+r1 <- ((size-1)*varianza+size*(valMedio-mu)**2) / confSup
+r2 <- ((size-1)*varianza+size*(valMedio-mu)**2) / confInf
+print(paste("r1=", round(r1, digits = 2), 
+            "r2=", round(r2, digits = 2)))
+```
+
+Il grado di fiducia assegnato in questo caso è 0.95, in seguito è stata calcolata la densità con il metodo del **$\chi^2$ con n gradi di libertà** dove n è pari alla grandezza del campione(__size__). La densità è stata calcolata sia per il limite superiore che per quello inferiore, i risultati sono riportati nello script soprastante. Infine è stata calcolata la stima per dell'intervallo di confidenza di grado 0.95, l'intervallo va da 7.21 a 12.26 e la varianza(9.25) è compresa in tale intervallo. Di seguito viene riportato il grafico
+
+```{r echo=FALSE}
+curve(dchisq(x, df= 6), from = 0, to = 12, axes = FALSE, ylim=c(0,0.15),
+      xlab = "", ylab = "", main="Densità chiquadro con n gradi di libertà")
+text(4, 0.02, 0.95)
+axis(1, c(0, 2, 4, 6, 12), c("", round(confInf, digits = 2),
+                             expression(n-2),
+                             round(confSup, digits = 2), ""))
+vals <- seq(0,2, length = 100)
+x<- c(0, vals, 2, 0)
+y<- c(0, dchisq(vals, df=6),0,0)
+polygon(x, y, density = 20, angle=45)
+vals<- seq(6,12, length = 100)
+x <- c(6, vals,12 ,6)
+y <- c(0, dchisq(vals, df = 6), 0, 0)
+polygon(x, y, density = 20, angle = 45)
+abline(h=0)
+text(1.2,0.02,paste(0.05, "/2", sep = ""))
+text(8.5,0.02,paste(0.05, "/2", sep = ""))
+```
+
 ## 7.3.4 Intervallo per $\sigma^2$ con non $\mu$ nota
+Per determinare un intervallo di confidenza da 1 a $\infty$ per la varianza nel caso in cui il valore medio della popolazione non sia noto si considera la seguente variabile aleatoria di pivot.
+$$Q_n = \frac{(n-1)S^2_n}{\sigma^2} = \frac{1}{\sigma^2} \sum_{i=1}^{n}(X_i - \overline{X}_n)^2$$
+Questa variabile dipende dal campione e dal parametro non noto $\sigma^2$ ed è distribuita con la legge del $\chi^2$ con n-1 gradi di libertà.  
+Di seguito viene mostrato lo script per calcolare il limite superiore e inferiore per questo intervallo
+```{r}
+alpha <- 1 - 0.95
+limInf <- qchisq(alpha/2, df = size-1)
+limSup <- qchisq(1 - alpha/2, df = size-1)
+print(paste("limite inf.=", round(limInf, digits = 2), 
+            "limite sup.=", round(limSup, digits = 2)))
+r1 <- (size-1)*var(popolazioneAtleti$km)/qchisq(1-alpha/2, df = size-1)
+r2 <- (size-1)*var(popolazioneAtleti$km)/qchisq(alpha/2, df = size-1)
+print(paste("r1=", round(r1, digits = 2), 
+            "r2=", round(r2, digits = 2)))
+```
+
+Il grado di fiducia è rimasto 0.95, il calcolo del limite inferiore e superiore è stato fatto con il metodo del $\chi^2$ con n-1 gradi di libertà, il limite inferiore è 82 mentre quello superiore è 139.78.   **L'intervallo di confidenza** va da 7.21 a 12.29, la varianza è di 9.24 quindi possiamo dire che anche in questo caso la varianza è compresa nell'intervallo.  
+Di seguito viene mostrato il grafico.
+
+```{r, echo=FALSE}
+curve(dchisq(x, df= 6), from = 0, to = 12, axes = FALSE, ylim=c(0,0.15),
+      xlab = "", ylab = "", main="Densità chiquadro con n-1 gradi di libertà")
+text(4, 0.02, 0.95)
+axis(1, c(0, 2, 4, 6, 12), c("", round(limInf, digits = 2),
+                             expression(n-3),
+                             round(limSup, digits = 2), ""))
+vals <- seq(0,2, length = 100)
+x<- c(0, vals, 2, 0)
+y<- c(0, dchisq(vals, df=6),0,0)
+polygon(x, y, density = 20, angle=45)
+vals<- seq(6,12, length = 100)
+x <- c(6, vals,12 ,6)
+y <- c(0, dchisq(vals, df = 6), 0, 0)
+polygon(x, y, density = 20, angle = 45)
+abline(h=0)
+text(1.2,0.02,paste(0.05, "/2", sep = ""))
+text(8.5,0.02,paste(0.05, "/2", sep = ""))
+```
+
+# 8. Intervalli di fiducia approssimati
