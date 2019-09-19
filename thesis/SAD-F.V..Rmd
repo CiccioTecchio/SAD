@@ -379,14 +379,22 @@ I metodi gerarchici sono di cinque tipi di:
 * mediana
 
 I metodi del centroide e della mediana non calcolano la matrice della distanza partendo dalle distanze precedenti ma dai baricentri dei cluster.
-L'applicazione dei metodi gerarchici verrà svolta applicando la distanza euclidea, ogni metodo gerarchico viene calcolato dividendo i dati prima in due e poi in tre cluster in modo tale da poter confrontare i rusiltati ottenuti con il risultato del metodo non gerarchico k-means.
+L'applicazione dei metodi gerarchici verrà svolta applicando la distanza euclidea, ogni metodo gerarchico viene calcolato dividendo i dati prima in due e poi in tre cluster in modo tale da poter confrontare i rusiltati ottenuti con il risultato del metodo non gerarchico k-means.  
+Per calcolare i vari tipi di metodi gerarchici è stato realizzato lo script **metodiGerarchici()** che viene mostrato di seguito
+
+```{r echo=FALSE}
+metodiGerarchici
+```
+
+La funzione prende in input il dataset(dsTassi), il numero di cluster, il metodo di agglomerazione da applicare(legame singolo, completo, medio, centroide o mediana) e il titolo da dare al grafico. La funzione calcola la matrice delle distanze con la funzione **dist()**, la funzione **hclust()** crea il dendrogramma prendendo come parametro la matrice delle distanze e il metodo di agglomerazione, infine plotta il dendrogramma.
 
 ## 6.5.1 Metodo del legame singolo
 Con questo metodo la distanza fra il gruppo $G_1$(contenente $n_1$ individui) e il gruppo $G_2$(contenente $n_2$ individui) viene definita come la minima distanza fra tutte le $n_1n_2$ distanze calcolabili fra ogni individuo di $G_1$ e ogni individuo di $G_2$.  
 Inizialmente consideriamo un insieme di cluster, in seguito si cerca nella matrice delle distanze il coefficiente di distanza minima e si raggruppano gli individui nello stasso cluster.  
-Se due individui riusultano simili verrà costruito un cluster con questi due elementi se gli elementi simili sono più di due verrà effettuata una scelta casuale e si procederà alla creazione di una nuova matrice. Questo processo verrà ripetuto fin quando sarà possibile aggiungere individui al cluster.  
-**Vantaggi**: risulta più facile individuare gruppi di qualsiasi forma ed è più facile mettere in evidenza valori anomali
-**Svantaggi**: si possono trovare nello stesso cluster individui non simili
+Se due individui riusultano simili verrà costruito un cluster con questi due elementi se gli elementi simili sono più di due verrà effettuata una scelta casuale e si procederà alla creazione di una nuova matrice. Questo processo verrà ripetuto fin quando sarà possibile aggiungere individui al cluster.   
+
+* **Vantaggi**: risulta più facile individuare gruppi di qualsiasi forma ed è più facile mettere in evidenza valori anomali
+* **Svantaggi**: si possono trovare nello stesso cluster individui non simili
 
 ```{r echo=FALSE}
 cluster2Table <- buildClusterTable(2)
@@ -397,94 +405,81 @@ cluster3Table$B.T[1] <- "73.1%"
 #metodo del legame singolo 2 cluster
 metodiGerarchici(dsTassi[1:2], regioni, 2, "single", "Metodo del legame singolo")
 cls <- applyClustering(dsTassi[1:2], "euclidean", "single", 2)
+paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster2Table$B.T[2] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
-
 
 #metodo del legame singolo 3 cluster
 metodiGerarchici(dsTassi[1:2], regioni, 3, "single", "Metodo del legame singolo")
 cls <- applyClustering(dsTassi[1:2], "euclidean", "single", 3)
+paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster3Table$B.T[2] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 
 ```
 
 ## 6.5.2 Metodo del legame completo
+Questo metodo definisce la distanza fra $G_1$ e $G_2$ come la distanza massima fra tutte le $n_1, n_2$ distanze che si possono calcolare tra ogni individuo di $G_1$ e $G_2$. Il metodo del legame completo privilegia l'omogeneità tra gli elementi del gruppo a scapito della differenziazione fra gruppi infatti il dendrogramma presenterà dei rami più lunghi rispetto a quelli del dendrogramma ottenuto con il metodo del legame singolo
 
 ```{r echo=FALSE}
 #metodo del legame completo 2 cluster
 metodiGerarchici(dsTassi[1:2], regioni, 2, "complete", "Metodo del legame completo")
 cls <- applyClustering(dsTassi[1:2], "euclidean", "complete", 2)
+paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster2Table$B.T[3] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
-#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "complete", "Metodo del legame completo")
-#cluster2Table$B.T[3] <- btwTot
-#print(paste("BetweenTotal =",btwTot))
 
 #metodo del legame completo 3 cluster
 metodiGerarchici(dsTassi[1:2], regioni, 3, "complete", "Metodo del legame completo")
 cls <- applyClustering(dsTassi[1:2], "euclidean", "complete", 3)
+paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster3Table$B.T[3] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
-#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "complete", "Metodo del legame completo")
-#cluster3Table$B.T[3] <- btwTot
-#print(paste("BetweenTotal =",btwTot))
 ```
 
 ## 6.5.3 Metodo del legame medio
+In questo caso la distanza fra i due gruppi viene definita come la media aritmetica delle distanze fra tutte le coppie che compongono i due gruppi.
 
 ```{r echo=FALSE}
 #metodo del legame medio 2 cluster
 metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "average", "Metodo del legame medio")
 cls <- applyClustering(dsTassi[1:2], "euclidean", "average", 2)
+paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster2Table$B.T[4] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
-#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "average", "Metodo del legame medio")
-#cluster2Table$B.T[4] <- btwTot
-#print(paste("BetweenTotal =",btwTot))
 
 #metodo del legame medio 3 cluster
 metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "average", "Metodo del legame medio")
 cls <- applyClustering(dsTassi[1:2], "euclidean", "average", 3)
+paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster3Table$B.T[4] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
-#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "average", "Metodo del legame medio")
-#cluster3Table$B.T[4] <- btwTot
-#print(paste("BetweenTotal =",btwTot))
 ```
 
 ## 6.5.4 Metodo del centroide
-
+Con il metodo del centroide la distanza fra i due gruppi viene definita come la distanza fra i centroidi, ovvero, tra le medie campionarie calcolate sugli elementi appartenenti ai due gruppi
 ```{r echo=FALSE}
 #metodo del centroide 2 cluster
 metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "centroid", "Metodo del centroide")
 cls <- applyClustering(dsTassi[1:2], "euclidean", "centroid", 2)
+paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster2Table$B.T[5] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
-#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "centroid", "Metodo del centroide")
-#cluster2Table$B.T[5] <- btwTot
-#print(paste("BetweenTotal =",btwTot))
 
 #metodo del centroide 3 cluster
 metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "centroid", "Metodo del centroide")
 cls <- applyClustering(dsTassi[1:2], "euclidean", "centroid", 3)
+paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster3Table$B.T[5] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
-#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "centroid", "Metodo del centroide")
-#cluster3Table$B.T[5] <- btwTot
-#print(paste("BetweenTotal =",btwTot))
 ```
 
 ## 6.5.4 Metodo della mediana
-
+Il metodo della mediana è simile a quello del centroide ma in questo caso la procedure è indipendete dal numero di cluster
 ```{r echo=FALSE}
 #metodo del centroide 2 cluster
 metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "median", "Metodo della mediana")
 cls <- applyClustering(dsTassi[1:2], "euclidean", "median", 2)
+paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster2Table$B.T[6] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
-#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "median", "Metodo della mediana")
-#cluster2Table$B.T[6] <- btwTot
-#print(paste("BetweenTotal =", btwTot))
 
 #metodo del centroide 3 cluster
 metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "median", "Metodo del centroide")
 cls <- applyClustering(dsTassi[1:2], "euclidean", "median", 3)
+paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster3Table$B.T[6] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
-#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "median", "Metodo del centroide")
-#cluster3Table$B.T[6] <- btwTot
-#print(paste("BetweenTotal =", btwTot))
 ```
 
 ## 6.6 Tabelle riassuntive

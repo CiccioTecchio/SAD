@@ -42,11 +42,11 @@ mykm <- function(ds, k, iter){
 
 metodiGerarchici <- function(ds, labels, numCluster, mtd, title){
     d = dist(ds, method = "euclidean", diag = TRUE, upper = TRUE)
-    hls = hclust(d, method = mtd)
     
     if(mtd %in% c("centroid", "median")){
         d = d ^ 2
     }
+    hls = hclust(d, method = mtd)
     #str(hls)
     
     #dengrogramma
@@ -58,7 +58,6 @@ metodiGerarchici <- function(ds, labels, numCluster, mtd, title){
     cutList = list(cut)
     numberCut = table(cut)
     #print(cutList)
-    
     agmean = aggregate(ds, cutList, mean)[, -1]
     
     plot(ds)
