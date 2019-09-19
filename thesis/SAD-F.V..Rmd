@@ -15,7 +15,10 @@ library(plyr)
 library(TeachingDemos)
 source("../scripts/utils.R")
 source("../scripts/nonOmo.R")
-source("https://raw.githubusercontent.com/talgalili/R-code-snippets/master/boxplot.with.outlier.label.r")
+source("../scripts/boxplot.with.outlier.label.R")
+source("../scripts/clustering.R")
+
+#source("https://raw.githubusercontent.com/talgalili/R-code-snippets/master/boxplot.with.outlier.label.r")
 
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -392,70 +395,96 @@ cluster3Table <- buildClusterTable(3)
 cluster3Table$B.T[1] <- "73.1%"
 
 #metodo del legame singolo 2 cluster
-btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "single", "Metodo del legame singolo")
-cluster2Table$B.T[2] <- btwTot
-print(paste("BetweenTotal =",btwTot))
+metodiGerarchici(dsTassi[1:2], regioni, 2, "single", "Metodo del legame singolo")
+cls <- applyClustering(dsTassi[1:2], "euclidean", "single", 2)
+cluster2Table$B.T[2] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
+
 
 #metodo del legame singolo 3 cluster
-btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "single", "Metodo del legame singolo")
-cluster3Table$B.T[2] <- btwTot
-print(paste("BetweenTotal =",btwTot))
+metodiGerarchici(dsTassi[1:2], regioni, 3, "single", "Metodo del legame singolo")
+cls <- applyClustering(dsTassi[1:2], "euclidean", "single", 3)
+cluster3Table$B.T[2] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
+
 ```
 
 ## 6.5.2 Metodo del legame completo
 
 ```{r echo=FALSE}
 #metodo del legame completo 2 cluster
-btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "complete", "Metodo del legame completo")
-cluster2Table$B.T[3] <- btwTot
-print(paste("BetweenTotal =",btwTot))
+metodiGerarchici(dsTassi[1:2], regioni, 2, "complete", "Metodo del legame completo")
+cls <- applyClustering(dsTassi[1:2], "euclidean", "complete", 2)
+cluster2Table$B.T[3] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
+#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "complete", "Metodo del legame completo")
+#cluster2Table$B.T[3] <- btwTot
+#print(paste("BetweenTotal =",btwTot))
 
 #metodo del legame completo 3 cluster
-btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "complete", "Metodo del legame completo")
-cluster3Table$B.T[3] <- btwTot
-print(paste("BetweenTotal =",btwTot))
+metodiGerarchici(dsTassi[1:2], regioni, 3, "complete", "Metodo del legame completo")
+cls <- applyClustering(dsTassi[1:2], "euclidean", "complete", 3)
+cluster3Table$B.T[3] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
+#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "complete", "Metodo del legame completo")
+#cluster3Table$B.T[3] <- btwTot
+#print(paste("BetweenTotal =",btwTot))
 ```
 
 ## 6.5.3 Metodo del legame medio
 
 ```{r echo=FALSE}
 #metodo del legame medio 2 cluster
-btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "average", "Metodo del legame medio")
-cluster2Table$B.T[4] <- btwTot
-print(paste("BetweenTotal =",btwTot))
+metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "average", "Metodo del legame medio")
+cls <- applyClustering(dsTassi[1:2], "euclidean", "average", 2)
+cluster2Table$B.T[4] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
+#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "average", "Metodo del legame medio")
+#cluster2Table$B.T[4] <- btwTot
+#print(paste("BetweenTotal =",btwTot))
 
 #metodo del legame medio 3 cluster
-btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "average", "Metodo del legame medio")
-cluster3Table$B.T[4] <- btwTot
-print(paste("BetweenTotal =",btwTot))
+metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "average", "Metodo del legame medio")
+cls <- applyClustering(dsTassi[1:2], "euclidean", "average", 3)
+cluster3Table$B.T[4] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
+#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "average", "Metodo del legame medio")
+#cluster3Table$B.T[4] <- btwTot
+#print(paste("BetweenTotal =",btwTot))
 ```
 
 ## 6.5.4 Metodo del centroide
 
 ```{r echo=FALSE}
 #metodo del centroide 2 cluster
-btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "centroid", "Metodo del centroide")
-cluster2Table$B.T[5] <- btwTot
-print(paste("BetweenTotal =",btwTot))
+metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "centroid", "Metodo del centroide")
+cls <- applyClustering(dsTassi[1:2], "euclidean", "centroid", 2)
+cluster2Table$B.T[5] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
+#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "centroid", "Metodo del centroide")
+#cluster2Table$B.T[5] <- btwTot
+#print(paste("BetweenTotal =",btwTot))
 
 #metodo del centroide 3 cluster
-btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "centroid", "Metodo del centroide")
-cluster3Table$B.T[5] <- btwTot
-print(paste("BetweenTotal =",btwTot))
+metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "centroid", "Metodo del centroide")
+cls <- applyClustering(dsTassi[1:2], "euclidean", "centroid", 3)
+cluster3Table$B.T[5] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
+#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "centroid", "Metodo del centroide")
+#cluster3Table$B.T[5] <- btwTot
+#print(paste("BetweenTotal =",btwTot))
 ```
 
 ## 6.5.4 Metodo della mediana
 
 ```{r echo=FALSE}
 #metodo del centroide 2 cluster
-btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "median", "Metodo della mediana")
-cluster2Table$B.T[6] <- btwTot
-print(paste("BetweenTotal =", btwTot))
+metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "median", "Metodo della mediana")
+cls <- applyClustering(dsTassi[1:2], "euclidean", "median", 2)
+cluster2Table$B.T[6] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
+#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "median", "Metodo della mediana")
+#cluster2Table$B.T[6] <- btwTot
+#print(paste("BetweenTotal =", btwTot))
 
 #metodo del centroide 3 cluster
-btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "median", "Metodo del centroide")
-cluster3Table$B.T[6] <- btwTot
-print(paste("BetweenTotal =", btwTot))
+metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "median", "Metodo del centroide")
+cls <- applyClustering(dsTassi[1:2], "euclidean", "median", 3)
+cluster3Table$B.T[6] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
+#btwTot <- metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "median", "Metodo del centroide")
+#cluster3Table$B.T[6] <- btwTot
+#print(paste("BetweenTotal =", btwTot))
 ```
 
 ## 6.6 Tabelle riassuntive
@@ -702,3 +731,81 @@ text(8.5,0.02,paste(0.05, "/2", sep = ""))
 ```
 
 # 8. Intervalli di fiducia approssimati
+per costruire intervalli di confidenza approssimati per grandi campioni possiamo confrontare i valori medi di due diverse popolazioni, in questo studio prenderemo i valori medi di due popolazioni normali di cui sono note le varianze.
+
+## 8.1 Caso di studio
+Osservando un campione di 180 merendine prodotte da una azienda A si è riscontrato che in media le merendine scadono dono 200 giorni dalla loro messa in commercio, invece osservando un campione di 230 merendine prodotte da un'altra azienda B si è notato che la scadenza media delle merendine è di 150 giorni.  
+Supponiamo di conoscere la deviazione standard $\sigma_a = 120, \sigma_b = 80$ si vuole determinare una stima dell'intervallo di confidenza $1-\infty=0.99$ per la differenza fra le due medie.  
+Ricapitolando i dati a nostra di sposizione sono:  
+$A_{180} = 200, B_{230}=150$  
+$\sigma^2_a= 14400, \sigma^2_a=6400$  
+Di seguito viene riportato lo script per calcolare la differenza dei valori medi
+```{r}
+alpha <- 1-0.99
+zAmezzi <- qnorm(1-alpha/2, mean = 0, sd = 1)
+round(zAmezzi, digits = 2)
+A = 180
+B = 230
+meanA = 200
+meanB = 150
+stdDevA = 120
+stdDevB = 80
+muA = (meanA - meanB - zAmezzi) *sqrt(stdDevA^2/A + stdDevB^2/B)
+muB = (meanA - meanB + zAmezzi) *sqrt(stdDevA^2/A + stdDevB^2/B)
+toPrint<- paste("Differenza fra le medie:", round(muA, digits = 2),"-", round(muB, digits = 2))
+print(toPrint)
+```
+
+Analizzando i risultati ottenuti possiamo notare che $z_{a/2} = 2.57$ e che la stima per intervallo di confidenza di grado $1 - \infty$ per le differenze delle due medie $\mu_1$ e $\mu_2$ delle scadenze è pari a 492.45 - 545.94, quindi, dato che entrambi i limiti sono positivi è possibile dedurre che le merendine prodotte dall'industia A abbiano una scadenza superiore a quelle prodotte dall'industia B.
+
+## 8.2 $\chi^2 test$
+Con il $\chi^2$ test si punta a verificare che una certa popolazione descritta da una variabile aleatoria $X$ sia caratterizzata da una funzione di distribuzione $f_x(x)$ avente k parametri non noti da stimare.
+Formuliamo le ipotesi:  
+
+- $Hp_0$: $X$ ha una funzione di distribuzione $f_x(x)$ (ipotesi nulla)
+- $Hp_1$: $X$ non ha una funzione di distribuzione $f_x(x)$ (ipotesi alternativa)
+
+Il $\chi^2$ test mira a riggettare $H_0$ al fine di accettare $H_1$.  
+Siamo intenzionati a verificare se il campione dell'altezza(espressa in cm) di 105 persone di venticinque anni sia adatto ad una distribuzione normale
+```{r warning=FALSE}
+sample <- c(rep(165,15), rep(170, 25), rep(160, 10), rep(155, 25), rep(180, 30))
+n <- 105
+media <- mean(sample)
+print(paste("media =", round(media, digits = 2)))
+stdDev <- sd(sample)
+print(paste("deviazione standard =", round(stdDev, digits = 2)))
+a <- numeric(4)
+for(i in 1:4){
+  a[i] <- qnorm(0.2*i, mean = media, sd = stdDev) #quantili
+}
+a
+r <- 5
+nint <- numeric(r)
+nint[1] <- length(which(sample < a[1]))
+nint[2] <- length(which((sample >= a[1]) & (sample < a[2])))
+nint[3] <- length(which((sample >= a[2]) & (sample < a[3])))
+nint[4] <- length(which((sample >= a[3]) & (sample < a[4])))
+nint[5] <- length((which(sample >= a[4])))
+nint
+chiQ <- sum(((nint-n*0.2)/sqrt(n*0.2))^2)
+chiQ
+k <- 2
+alpha <- 0.05
+limInf <- qchisq(alpha/2, df = r-k-1)
+limSup <- qchisq(1 - alpha/2, df = r-k-1)
+print(paste("Limite inferiore =", round(limInf, digits = 2),
+            "limite superiore =", round(limSup, digits = 2)))
+```
+
+L'altezza media è di 167.62cm e la deviazione standard è di 9.51.  
+In seguito il campione è stato suddiviso in 5 sottoinsiemi ed è stata applicata la funzione **qnorm()** per calcolare i quantili della distribuzione normale, l'output è il seguente
+
+- 1° sottoinsieme ha un intervallo che va da $-\infty$ a 159.61 e contiene 25 elementi
+- 2° sottoinsieme ha un intervallo che va da 159.61 a 165.20 e contiene 25 elementi
+- 3° sottoinsieme ha un intervallo che va da 165.20 a 170.02 e contiene 25 elementi
+- 4° sottoinsieme ha un intervallo che va da 170.02 a 175.62 e contiene 0 elementi
+- 5° sottoinsieme ha un intervallo che va da 175.62 a $\infty$ e contiene 30 elementi
+
+Il $\chi^2$ è pari a 27.14, a questo punto bisogna calcolare i gradi di libertà a chi deve essere applicata la densità del $\chi^2$. Per calcolarli si applica la formula **r-k-1** dove r sono i sottoinsieme(r=5) e k sono i parametri non noti(k = 2 i parametri non noti sono media e varianza) quindi la funzione di distribuzione ha 2 gradi di libertà.  
+Andiamo a calcolare il limite inferiore e superiore e notiamo che sono pari rispettivamente a 0.05 e 7.38, dato che il valore del $\chi^2$ non rientra nell'intervallo possiamo affermare che il campione analizzato non può essere accettato come una distribuzione normale quindi possiamo **rigettare l'ipotesi nulla**.
+

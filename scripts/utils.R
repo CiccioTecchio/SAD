@@ -64,28 +64,6 @@ metodiGerarchici <- function(ds, labels, numCluster, mtd, title){
     plot(ds)
     points(agmean, col=1:2, pch=8, cex=1)
 
-    n = nrow(ds)
-    #print(n)
-    # total omogenity
-    totHomogenity = (n-1)*sum(apply(ds, 2, var))
-    #print(totHomogenity)
-    #between
-    within = 0
-    clusterHomogeneity = vector(length = numCluster)
-    for(i in 1:numCluster){
-        value = (numberCut[[i]] - 1) * sum(agmean[i, ])
-        clusterHomogeneity[i] = value
-        #print(value)
-        if(!is.na(value)){
-            within = within + value
-        }
-    }
-    between = totHomogenity - within
-    betweenTotal = (between / totHomogenity)
-    #print(c("Between Total", betweenTotal))
-    #print(paste("Between Total", betweenTotal))
-    betweenTotal = paste(round(betweenTotal, digits = 2), "%", sep = "")
-    return(betweenTotal)
 }
 
 buildClusterTable <- function(clusterNum){
