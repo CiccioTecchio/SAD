@@ -32,14 +32,13 @@ knitr::opts_chunk$set(echo = TRUE)
 \setcounter{page}{1} 		
 \pagenumbering{arabic} 
 # 1. Introduzione
-L'obiettivo del progetto è quello di analizzare e confrontare il numero di laureati(delle università pubbliche) fra le varie regioni italiane nell'anno 2016, i dati sono stati presi dal sito _[dati.istat](http://dati.istat.it/)_ in formato xlsx e sono stati importati in R utilizzando la funzione **read_excel** dopodichè le informazioni delle colonne del dataset vengono salvate nelle  seguenti variabili 
-```{r}
-ds <- read_excel("../dataset/dataset.xlsx", 
-                 skip = 1)
+L'obiettivo del progetto è quello di analizzare e confrontare il numero di laureati(delle università pubbliche) fra le varie regioni italiane nell'anno 2016, i dati sono stati presi dal sito _[dati.istat](http://dati.istat.it/)_ in formato xlsx e sono stati importati in R utilizzando la funzione **read_excel**.  
 
+```{r}
+ds <- read_excel("../dataset/dataset.xlsx", skip = 1)
 ```
 
-Una volta importato il dataset essopresenta i segenti valori  
+Una volta importato il dataset esso presenta i segenti valori  
 \begin{figure}[h]
 \begin{center}
 \includegraphics[width=350px]{../img/ds.png}
@@ -47,8 +46,8 @@ Una volta importato il dataset essopresenta i segenti valori
 \end{center}
 \end{figure}
 
-Per semplificare il lavoro i valori delle colonne vengono salvati all'interno delle variabili riportate di seguito
-```{r}
+Per semplificare il lavoro i valori delle colonne sono stati salvati all'interno delle variabili riportate di seguito
+```{r warning = FALSE}
 #variabili
 regioni <- c("Piemonte", "Valle d'Aosta", "Liguria", "Lombardia",
              "T. Alto Adige", "Veneto", "F.V.Giulia", "E. Romagna",
@@ -63,7 +62,7 @@ vecchio <- ds$`corsi di laurea del vecchio ordinamento`
 ```
 
 ## 1.1 Calcolo dei tassi
-I valori risultano molto altalenanti, quindi potrebbero risultare difficili da rappresentare graficamente in futuro, per ovviare a questo problema si è pensato di rappresentare i dati come tasso di laureati per regione ogni mille abitanti, i valori sono stati poi arrotondati alle sole prime tre cifre decimale, il dataset dopo la trasformazione si presenta nel seguente modo:
+I valori risultano molto altalenanti, quindi potrebbero risultare difficili da rappresentare graficamente in futuro, per ovviare a questo problema si è pensato di rappresentare i dati come tasso di laureati per regione ogni mille abitanti, i valori sono stati poi arrotondati alle sole prime tre cifre decimalI, il dataset dopo la trasformazione si presenta nel seguente modo:
 
 \begin{figure}[h]
 \begin{center}
@@ -89,20 +88,20 @@ dsTassi <- data.frame("Tasso laureati triennali"=round(tassoTriennale, digits = 
                       "Tasso laureati a ciclo unico"=round(tassoUnico, digits = 3),
                       "Tasso laureati vecchio ordinamento"=round(tassoVecchio, digits = 3)
                      )
-dsPopolazione <- data.frame("Popolazione"= popolazione)
-row.names(dsPopolazione) <- regioni
+#dsPopolazione <- data.frame("Popolazione"= popolazione)
+#row.names(dsPopolazione) <- regioni
 row.names(dsTassi) <- regioni
 
 ```
 
-Nel data frame **dsPopolazione** sono presenti il numero di abitanti di ogni regione italiana nell'anno 2016; nel data frame **dsTassi** sono presenti i tassi di laureati per ogni regioni italiana per ogni tipo di laurea e anche il totale dei tassi.
+<!--Nel data frame **dsPopolazione** sono presenti il numero di abitanti di ogni regione italiana nell'anno 2016;--> nel data frame **dsTassi** sono presenti i tassi di laureati per ogni regioni italiana per ogni tipo di laurea e anche il totale dei tassi.
 
 # 2. Grafici a barre
 Per una rapida visualizzazione dei dati si è deciso di mostrare i grafici a barre dei laureati nelle varie regioni d'Italia. I grafici verranno mostrati con la funzione scritta ad hoc **showBar**
-```{r}
+```{r echo=FALSE}
 showBar
 ```
-essa prende in input un dei vettori dei tassi, i nomi delle regioni per definire le label della legenda, il nome del grafico e il numero di righe del dataframe, i colori delle barre sono stati definiti grazie alla funzione **distinctColorPalette** della libreria **randomcoloR**.
+essa prende in input una delle colonne del data frame dsTassi, i nomi delle regioni per definire le label della legenda, il titolo da dare al grafico e il numero di righe del dataframe, i colori delle barre sono stati definiti grazie alla funzione **distinctColorPalette** della libreria **randomcoloR**.
 
 ## 2.1 Grafico dei tassi dei laureati triennali
 ```{r}
@@ -156,8 +155,8 @@ showPareto <- function(totale, main, rows){
 
 showPareto(totaleTassi, "Diagramma di Pareto di tutti i laureati nel 2016", rowTassi)
 ```
-\newpage
-\begin{figure}[t]
+
+\begin{figure}[h]
 \includegraphics{../img/pareto.png}
 \caption{Pareto dei laureati italiani}
 \end{figure}
@@ -166,6 +165,7 @@ Dal grafico si evince che:
 - l'8.56% dei laureati italiani è abruzzese
 - il 75.89% dei laureati italiani è abruzzese, romagnolo, laziale, marchigiano, umbro, friulano, toscano, campano, veneto, piemontese, molisano, alto adesino, lombardo
 - il 15,55% dei laureati italiani vive nelle restanti sette regioni
+
 Possiamo dire che il principio di Pareto non è soddisfatto perchè l'80% dei laureati esce dal più del 50% delle università sparse per le varie regioni(invece che nel 20%).
 
 # 4. Retta di regressione
@@ -191,8 +191,7 @@ Possiamo notare che la covarianza è positiva quindi possiamo dire che i valori 
 Il modello di regressione lineare semplice è esprimibile attraverso l'equazione di una retta tale da riuscire a interpolare i punti della nuvola dello scatterplot meglio di tutte le altre rette possibili.  
 L'equazione della retta è:
 $$Y =  \alpha + \beta X$$
-Dove alpha è l'**intercetta** e beta il **coefficiente angolare**.  
-L'intercetta corrisponde all'ordinata del punto di intersezione tra la retta interpolante e l'asse delle ordinate. Il coefficiente angolare indica la pendenza della retta un coefficiente positivo indica una retta crescente, mentre, un coefficiente angolare negativo indica una retta descrescente. 
+Dove $\alpha$ è l'**intercetta** e $\beta$ è il **coefficiente angolare**. L'intercetta corrisponde all'ordinata del punto di intersezione tra la retta interpolante e l'asse delle ordinate. Il coefficiente angolare indica la pendenza della retta un coefficiente angolare positivo indica una retta crescente, mentre, un coefficiente angolare negativo indica una retta descrescente. 
 
 ## 4.2 Costruzione del modello di regressione lineare semplice
 ```{r echo=TRUE, eval=TRUE}
@@ -226,7 +225,7 @@ text(x= tassoMagistrale, y=residui+0.05, labels = regioni, cex=0.6)
 abline(h=0, col="blue", lty=2)
 ```
 
-# 5. Statistica descrcittiva
+# 5. Statistica descrittiva
 
 ## 5.1 Quantile
 La funzione **quantile()** è utile per analizzare un campione di dati, essa restituisce cinque valori:
@@ -319,13 +318,13 @@ L'analisi dei cluster è una metodologia che permette di raggruppare un campio a
 Abbiamo detto che raggruppiamo in base alla **somiglianza** degli elementi, per calcolare questa somiglianza applichiamo i metodi delle distanze. Le distanze tra tutte le possibili coppie di unità vengono inserite in una matrice simmetrica _D_ di cardinalità _n x n_. Il metodo che che utilizzero per calcolare le distanze è quello della **metrica Euclidea**.  
 Avendo definito come misurare la distanza andiamo a definire come raggruppare le unità osservate, esistono tre metodi per il raggruppamento:
 
-1. Eunumerazione completa
+1. Enumerazione completa
 2. Metodi gerarchici
 3. Metodi non gerarchici
 
 L'**enumerazione completa** è molto onerosa dal punto di vista computazionale, in quanto questo metodo cerca di ottimizzare(minimizzare) una fissata funzione obiettivo per ogni possibile partizione delgi individui all'interno di un cluster.  
 I **metodi gerarchici** possono essere di due tipi **agglomerativi** o **divisivi**, i tipi agglomerativi partono da una situazione in cui ci sono _n_ cluster distinti con cardinalità pari a uno, per arrivare a un solo cluster con cardinalità _n_. Invece i metodi divisi fanno l'inverso dei metodi agglomerativi, ovvero, partono da un unico cluster con cardinalità _n_ per arrivare ad _n_ cluster con cardinalità 1.  
-L'obiettivo dei metodi gerarchi è arrivare alla costruzione di un **dendrogramma** ovvero in grafico ad albero che rappresenta la sequenza delle partizioni. Il dendrogramma riporta sull'ordinata i livelli di distanza e sulle ascisse i signoli elementi, questa rappresentazione consente di farci capire rapidamente i livelli di distanza fra gli elementi.  
+L'obiettivo dei metodi gerarchi è arrivare alla costruzione di un **dendrogramma** ovvero il grafico ad albero che rappresenta la sequenza delle partizioni. Il dendrogramma riporta sull'ordinata i livelli di distanza e sulle ascisse i signoli elementi, questa rappresentazione consente di farci capire rapidamente i livelli di distanza fra gli elementi.  
 I **metodi non gerarchici** permettono di riallocare gli elementi già classificati in un precedente livello di analisi.
 
 ## 6.2 Calcolo delle misure di non omogeneità interna e totale
@@ -379,14 +378,14 @@ I metodi gerarchici sono di cinque tipi di:
 * mediana
 
 I metodi del centroide e della mediana non calcolano la matrice della distanza partendo dalle distanze precedenti ma dai baricentri dei cluster.
-L'applicazione dei metodi gerarchici verrà svolta applicando la distanza euclidea, ogni metodo gerarchico viene calcolato dividendo i dati prima in due e poi in tre cluster in modo tale da poter confrontare i rusiltati ottenuti con il risultato del metodo non gerarchico k-means.  
+L'applicazione dei metodi gerarchici verrà svolta applicando la distanza euclidea, ogni metodo gerarchico viene calcolato dividendo i dati prima in due e poi in tre cluster in modo tale da poter confrontare i risultati ottenuti con il risultato del metodo non gerarchico k-means.  
 Per calcolare i vari tipi di metodi gerarchici è stato realizzato lo script **metodiGerarchici()** che viene mostrato di seguito
 
 ```{r echo=FALSE}
 metodiGerarchici
 ```
 
-La funzione prende in input il dataset(dsTassi), il numero di cluster, il metodo di agglomerazione da applicare(legame singolo, completo, medio, centroide o mediana) e il titolo da dare al grafico. La funzione calcola la matrice delle distanze con la funzione **dist()**, la funzione **hclust()** crea il dendrogramma prendendo come parametro la matrice delle distanze e il metodo di agglomerazione, infine plotta il dendrogramma.
+La funzione prende in input il dataset(dsTassi[1:2]), il numero di cluster, il metodo di agglomerazione da applicare(legame singolo, completo, medio, centroide o mediana) e il titolo da dare al grafico. La funzione calcola la matrice delle distanze con la funzione **dist()**, la funzione **hclust()** crea il dendrogramma prendendo come parametro la matrice delle distanze e il metodo di agglomerazione, infine plotta il dendrogramma.
 
 ## 6.5.1 Metodo del legame singolo
 Con questo metodo la distanza fra il gruppo $G_1$(contenente $n_1$ individui) e il gruppo $G_2$(contenente $n_2$ individui) viene definita come la minima distanza fra tutte le $n_1n_2$ distanze calcolabili fra ogni individuo di $G_1$ e ogni individuo di $G_2$.  
@@ -452,6 +451,7 @@ cluster3Table$B.T[4] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 
 ## 6.5.4 Metodo del centroide
 Con il metodo del centroide la distanza fra i due gruppi viene definita come la distanza fra i centroidi, ovvero, tra le medie campionarie calcolate sugli elementi appartenenti ai due gruppi
+
 ```{r echo=FALSE}
 #metodo del centroide 2 cluster
 metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "centroid", "Metodo del centroide")
@@ -468,6 +468,7 @@ cluster3Table$B.T[5] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 
 ## 6.5.4 Metodo della mediana
 Il metodo della mediana è simile a quello del centroide ma in questo caso la procedure è indipendete dal numero di cluster
+
 ```{r echo=FALSE}
 #metodo del centroide 2 cluster
 metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "median", "Metodo della mediana")
@@ -489,6 +490,12 @@ kable(cluster2Table)
 kable(cluster3Table)
 ```
 
+Conclusioni:
+
+* La misura di non omogeneità **peggiore** si ottiene con i metodi gerarchici del legame singolo, medio, centroide e mediana su 2 cluster(28.24%)
+* La misura di non omogeneità **migliore** si ottiene con il metodo k-means su 3 cluster 73.1%
+* Altre misure di non omogeneità accettabili sono quelle con un valore superiore al 70% esse sono quelle ottenute con il metodo k-means su 3 cluster e con il metodo gerarchico del legame completo con 3 cluster
+
 # 7. Inferenza statistica
 Una indagine statisica si effettua su una popolazione che può essere finita o infinita, le caratteristiche della popolazione possono essere ottenute osservando la totalità della popolazione oppure un sottoinsieme di essa(un campione) se ci troviamo di fronte a una popolazione infita possiamo studiare le sue caratteristiche solamente attraverso un suo campione.  
 L'inferenza statistica ha il compito di estendere le caratteristiche osservate in un un campione a tutta la popolazione, il problema dell'inferenza statistica è quello di riuscire a studiare la popolazione attraverso un parametro non noto, l'inferenza statistica si basa su due metodi di indagine essi sono **stima dei parametri** e **verifica delle ipotesi**.  
@@ -498,7 +505,7 @@ Per studiare i problemi dell'inferenza statistica occorre conoscere le variabili
 
 ## 7.1 Variabile aleatoria normale
 La normale costituisce una distribzione limite alla quale tendono le variabili aleatoria in opportuni casi.  
-Prenderemo in esame la tematica "**chilometri di corsa percorsi da 110 atleti durante i loro allenamenti settimanali**"\footnote{per motivi di spazio il data frame popolazioneAtleti non viene mostrato nella tesina ma può essere visto lanciando il comando \textit{View(popolazioneAtleti)}} Il campione di atleti è stato creato generato usando la funzione __rnorm()__. 
+Prenderemo in esame la tematica "**chilometri di corsa percorsi da 110 atleti durante i loro allenamenti settimanali**".\footnote{per motivi di spazio il data frame popolazioneAtleti non viene mostrato nella tesina ma può essere visto lanciando il comando \textit{View(popolazioneAtleti)}} Il campione di atleti è stato  generato usando la funzione __rnorm()__. 
 ```{r echo = TRUE, eval = FALSE }
 popolazioneAtleti <- data.frame(km = floor(rnorm(110, 24, 3)))
 #salvo i dati in un CSV
@@ -507,10 +514,12 @@ write.table(popolazioneAtleti, file = "dataset/sample.csv", row.names = FALSE, s
 
 Per calcolare la  densità di una variabile aleatoria $X$ è data dalla seguente formula:
 $$f_X(x) = \frac{1}{\sigma \sqrt{2\pi }} exp\left \{ - \frac{(x - \mu)^2)}{2 \sigma^2} \right \}, x \epsilon \mathbb{R} (\mu \epsilon \mathbb{R}, \sigma > 0)$$
-la densità di __popolazioneAtleti__ in viene calcolata dal seguente script R
+
 ```{r echo=FALSE, eval=TRUE}
 popolazioneAtleti <- read.csv(file="../dataset/sample.csv", header=TRUE, sep=";")
 ```
+
+la densità di __popolazioneAtleti__ in viene calcolata dal seguente script R
 
 ```{r}
 valMedio <- mean(popolazioneAtleti$km)
@@ -528,6 +537,7 @@ abline(v=valMedio, col= "red", lwd=2, lty = 2)
 
 Per calcolare la **densità** come prima cosa calcoliamo il valore medio e deviazione standard del campione, infine con la funzione __curve()__ che prende come input la densità normale del campione calcolata con la funzione __dnorm(valore medio, deviazione standard)__ e i parametri __from__ e __to__ che indicano l'intervallo del grafico, sul grafico è stata anche riportata la retta che rappresenta il valore medio, si può notare che il valore medio(23.27) coincide con massimo della curva, essendoci una deviazione standar alta(3.04) possiamo dire che al decrescere della deviazione standard la curva si appiattirà.  
 Per calcolare la **funzione di distribuzione normale** si usa la funzione __pnorm()__ di R, di seguito viene mostrata il codice per calcolare la funzione di distribuzione normale sul campione.
+
 ```{r}
 titolo = paste("km fatti in una settimana di allenamento mu =",
                round(valMedio, digits = 2),
@@ -537,12 +547,15 @@ curve(pnorm(x, mean = valMedio, sd = stdDev), from = 13, to = 35, main = titolo)
 abline(v=20, col= "red", lwd= 1, lty = 2)
 abline(v=28, col= "red", lwd= 1, lty = 2)
 ```
+
 Notiamo che la funzione cresce nell'intervallo che va da 20 a 28 per poi arrivare ad 1 intorno al 29 per poi stabilizzarsi.  
 Possiamo anche calcolare i quantili del campione preso in analisi grazie alla funzione R __qnorm()__ 
+
 ```{r}
 q <- c(0, 0.25, 0.50, 0.75, 1)
 qnorm(q, mean = valMedio, sd = stdDev)
 ```
+
 Conclusioni: 
 
 * **25%** dei km è pari a 21.22 vicino al punto in cui la probabilità comincia a crescere
@@ -553,6 +566,7 @@ Conclusioni:
 Possiamo stimare i parametri non noti con due metodi, **metodo dei momenti** **metodo della massima verosomiglianza**. Dato che vogliamo stimare i paramentri non noti di una distribuzione normale la scelta
 del metodo stimatore è indifferente perchè entrambi i metodi ci porteranno allo stesso risultato.  
 Troviamo uno stimatore per il valore medio(media campionaria)$\mu$ e uno per la varianza $\sigma^2$
+
 ```{r}
 mu <- valMedio
 sigmaQ <- (length(popolazioneAtleti$km)-1) * var(popolazioneAtleti$km)/length(popolazioneAtleti$km)
@@ -597,6 +611,7 @@ text(0, 0.30, "Regione accettazione")
 Utilizziamo il **metodo pivotale** e consideriamo una variabile aleatoria con valore medio nullo e varianza unitaria. La variabile aleatoria standardizzata dipende dal campione scelto e dal parametro non noto $\mu$ per questo può essere interpretata come una variabile aleatoria di pivot. Applicando il metodo pivotale conosciamo il limite inferiore($\infty/2$) e la regione di accettazione($1-\infty$).  
 La variabile aleatoria che andiamo a considerare è: $$Z_n = \frac{\overline{X}_n -\mu}{\sigma / \sqrt{n}}$$
 Di seguito viene riportato lo script R per determinare l'intervallo di confidenza
+
 ```{r}
 #grado di confidenza
 alpha <- 1 - 0.95
@@ -623,6 +638,7 @@ plotDensita("Densità normale standard", 0.95, 0.05, limite)
 ## 7.3.2 Intervallo per $\mu$ con non $\sigma^2$ nota
 Per questo studio verrà utilizzata la **densità di Student con n-1 gradi di libertà**. Anche in questo caso per determinare il valore medio possiamo utilizzare il metodo pivotale con la seguente variabile aleatoria: $$T_n = \frac{\overline{X}_n -\mu}{S_n / \sqrt{n}}$$.  
 In questo caso il calcolo dei limiti viene fatto con la funzione __qt()__ e poi possiamo andare a calcolare la regione ammissibile, di seguito viene riportato lo script per il calcolo della stima dell'intervallo in cui ricade $\mu$
+
 ```{r}
 alpha <- 1 - 0.99
 limite <- qt(1 - alpha/2, df = size-1)
@@ -636,6 +652,7 @@ print(paste("r1 =", round(r1, digits = 2),
             "r2 =", round(r2, digits = 2))
       )
 ```
+
 Avendo aumentato i margini di accettazione(da 0.95 a 0.99) la diretta conseguenza sarà il fatto che i margini di rifiuto saranno più bassi. La ragione di accattazione va da -2.62 a 2.62, con una grado di fiducia molto alto la stima dell'intervallo di confidenza è più ampia infatti va da 22.51 a 24.03 e anche in questo caso il valore medio ricade nell'intervallo.  
 Di seguito viene riportato il grafico della densità normale standard con i valori che riguardano il nostro intervallo di confidenza. Infine è stata calcolata la **stima dell'intervallo di confidenza** i valori sono stati salvati in __r1__ e __r2__, possiamo notare che l'intervallo di stima va da 22.51 a 24.03 e che il valore medio è compreso in questo intervallo.
 
@@ -735,6 +752,7 @@ Ricapitolando i dati a nostra di sposizione sono:
 $A_{180} = 200, B_{230}=150$  
 $\sigma^2_a= 14400, \sigma^2_a=6400$  
 Di seguito viene riportato lo script per calcolare la differenza dei valori medi
+
 ```{r}
 alpha <- 1-0.99
 zAmezzi <- qnorm(1-alpha/2, mean = 0, sd = 1)
