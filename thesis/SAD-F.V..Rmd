@@ -1,7 +1,6 @@
 ---
 title: "Statistica e Analisi dei Dati"
 author: "Francesco Vicidomini"
-date: "28/7/2019"
 output: 
     pdf_document: 
         toc: yes
@@ -328,12 +327,12 @@ L'obiettivo dei metodi gerarchi è arrivare alla costruzione di un **dendrogramm
 I **metodi non gerarchici** permettono di riallocare gli elementi già classificati in un precedente livello di analisi.
 
 ## 6.2 Calcolo delle misure di non omogeneità interna e totale
-Le misure di non omogeneità ci servono per calcolare quanti gli elementi siano distinti fra loro, esse vanno calcolate sia all'interno del sigolo cluster sia tra due cluster distinti. Una volta calcolate le misure saremo in grado di dire che gli elementi appartenti allo stesso cluster sono quanto più possibile omogenei fra loro a differenza di due(o più) elementi appartenti a due(o più) cluster distinti.  
+Le misure di non omogeneità ci servono per calcolare quanto gli elementi siano distinti fra loro, esse vanno calcolate sia all'interno del sigolo cluster sia tra due cluster distinti. Una volta calcolate le misure saremo in grado di dire che gli elementi appartenti allo stesso cluster sono quanto più possibile omogenei fra loro a differenza di due(o più) elementi appartenti a due(o più) cluster distinti.  
 Gli individui vanno scelti in modo tale da minimizzare le misure di non omogeneità all'interno dei cluster(within) e da massimizzare la misura di non omogeneità tra gruppi distinti(between).  
 Questo calcolo va effettuato sia per i metodi gerarchici sia per i metodi non gerarchici e corrisponde al _rapporto fra la somma dei quadrati degli elementi sotto la diagonale principale della matrice delle distanze e il numero degli individui_
 
 ## 6.3 Cluster con metodi non gerarchici: k-means
-Il metodo non gerachico k-means richiede che il numero di cluster venga specificato a priori e da in output un unica partizione. Per garantire la convergenza del metodo iterativo si considera la matrice contenete i quadrati delle distanze euclidee.  
+Il metodo non gerachico k-means richiede che il numero di cluster venga specificato a priori e da in output un'unica partizione. Per garantire la convergenza del metodo iterativo si considera la matrice contenete i quadrati delle distanze euclidee.  
 Vantaggi del k-means:  
 
 * rapidità nei calcoli
