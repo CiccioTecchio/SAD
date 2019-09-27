@@ -39,6 +39,7 @@ rsconnect/
 /thesis/*.pdf
 /thesis/*.log
 /thesis/*.tex
+/thesis/Vecchia.Rmd
 # script
 commit.sh
 img/.DS_Store

@@ -17,9 +17,24 @@ showPareto <- function(totale, main, rows){
     text(x-0.2, cumsum(freqRel) + 0.03, paste(format(cumsum(freqRel)*100, digits = 3), "%"))
 }
 
-showBoxPlot <- function(label, tasso, name, title, color, lim){
-    boxplot.with.outlier.label(label_name = label, tasso,
-    names=c(name), main=title, horizontal = TRUE,
+pareto <- function(main, rows){
+    dsRapporto$Totale <- rowSums(dsRapporto)
+    ordinato <- dsRapporto[order(dsRapporto$Totale, decreasing = TRUE),]
+    lbls <- rownames(ordinato)
+    ordinato <- ordinato$Totale
+    freqRel <- prop.table(ordinato)
+    app <- data.frame(ordinato)
+    pal<- distinctColorPalette(rows)
+    x<- barplot(freqRel, ylim= c(0, 1.5), main = main, col=pal, axisname = FALSE)
+    axis(1, las=2, hadj= 0.6, at=x, labels=lbls, line=1, col="transparent")
+    lines(x, cumsum(freqRel), type = "b", pch=16)
+    text(x-0.2, cumsum(freqRel) + 0.03, paste(format(cumsum(freqRel)*100, digits = 3), "%"))
+    dsRapporto$Totale <- NULL
+}
+
+showBoxPlot <- function(label, rapporto, name, title, color, lim){
+    boxplot.with.outlier.label(label_name = label, rapporto,
+    names=c(name), main=title,
     col= color, pars=list(ylim=c(0,lim)))
 }
 
@@ -36,7 +51,7 @@ mykm <- function(ds, k, iter){
     
     km <- kmeans(ds, centers = initialCentroid, iter.max = iter)
     print(km)
-    plot(dsTassi[1:2], main=paste("K-means con k =",k))
+    plot(dsRapporto[1:2], main=paste("K-means con k =",k))
     points(km$center, col= 1:10, pch=8, cex=2)
 }
 

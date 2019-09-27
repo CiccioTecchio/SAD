@@ -60,110 +60,90 @@ unico <- ds$`corsi di laurea magistrale a ciclo unico`
 vecchio <- ds$`corsi di laurea del vecchio ordinamento`
 ```
 
-## 1.1 Calcolo dei tassi
-I valori risultano molto altalenanti, quindi potrebbero risultare difficili da rappresentare graficamente in futuro, per ovviare a questo problema si è pensato di rappresentare i dati come tasso di laureati per regione ogni mille abitanti, i valori sono stati poi arrotondati alle sole prime tre cifre decimalI, il dataset dopo la trasformazione si presenta nel seguente modo:
-
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=450px]{../img/dsTassi.png}
-\caption{Tasso di laureati ogni mille abitanti}
-\end{center}
-\end{figure}
-
+## 1.1 Calcolo dei rapporti
+I valori risultano molto altalenanti, quindi potrebbero risultare difficili da rappresentare graficamente in futuro, per ovviare a questo problema si è pensato di rappresentare i dati come il rapporto fra i laureati della regione e il numeri di laureati totali per lo specifico ciclo di studi, i risultati verranno poi moltiplicati per 100 e arrotondati alle sole prime due cifre decimali.  
 I valori sono stati calcolati utilizzando i seguenti comandi:
 
 ```{r}
-popolazione <- c(4404000, 127329, 1571000, 10010000,
-                 1062860, 4915000, 1221000, 4448000,
-                 3744000, 891181, 1544000, 5888000, 
-                 1327000, 312027, 5851000, 4077000,
-                 573694, 1971000, 5074000, 1658000)
-tassoTriennale <- (triennale / popolazione) * 1000
-tassoMagistrale <- (magistrale / popolazione) * 1000
-tassoUnico <- (unico / popolazione) * 1000
-tassoVecchio <- (vecchio / popolazione) * 1000
-dsTassi <- data.frame("Tasso laureati triennali"=round(tassoTriennale, digits = 3),
-                      "Tasso laureati magistrali"=round(tassoMagistrale, digits = 3),
-                      "Tasso laureati a ciclo unico"=round(tassoUnico, digits = 3),
-                      "Tasso laureati vecchio ordinamento"=round(tassoVecchio, digits = 3)
-                     )
-#dsPopolazione <- data.frame("Popolazione"= popolazione)
-#row.names(dsPopolazione) <- regioni
-row.names(dsTassi) <- regioni
-
+rapTriennali <- round((triennale/sum(triennale))*100, digits = 2)
+rapMagistrali <- round((magistrale/sum(magistrale))*100, digits = 2)
+rapUnico <- round((unico/sum(unico))*100, digits = 2)
+rapVecchio <- round((vecchio/sum(vecchio))*100, digits = 2)
+dsRapporto <- data.frame(
+                        "Rapporto triennali"= rapTriennali,
+                        "Rapporto magistrali"= rapMagistrali,
+                        "Rapporto a ciclo unico"= rapUnico,
+                        "Rapporto vecchio ordinamento"= rapVecchio
+                        )
+row.names(dsRapporto) <- regioni
 ```
 
-<!--Nel data frame **dsPopolazione** sono presenti il numero di abitanti di ogni regione italiana nell'anno 2016;--> nel data frame **dsTassi** sono presenti i tassi di laureati per ogni regioni italiana per ogni tipo di laurea e anche il totale dei tassi.
+```{r echo=FALSE}
+kable(dsRapporto)
+```
+
+Possiamo notare che la somma degli elementi su ogni colonna si avvicina di molto a 100, non è esattamento 100 per colpa dell'arrotondamento.
 
 # 2. Grafici a barre
 Per una rapida visualizzazione dei dati si è deciso di mostrare i grafici a barre dei laureati nelle varie regioni d'Italia. I grafici verranno mostrati con la funzione scritta ad hoc **showBar**
-```{r echo=FALSE}
+```{r eval = TRUE, echo=FALSE}
 showBar
 ```
-essa prende in input una delle colonne del data frame dsTassi, i nomi delle regioni per definire le label della legenda, il titolo da dare al grafico e il numero di righe del dataframe, i colori delle barre sono stati definiti grazie alla funzione **distinctColorPalette** della libreria **randomcoloR**.
+essa prende in input una delle colonne del data frame **dsRapporti**, i nomi delle regioni per definire le label della legenda, il titolo da dare al grafico e il numero di righe del dataframe, i colori delle barre sono stati definiti grazie alla funzione **distinctColorPalette** della libreria **randomcoloR**.
 
-## 2.1 Grafico dei tassi dei laureati triennali
+## 2.1 Grafico del rapporto dei laureati triennali
 ```{r}
-rowTassi <- nrow(dsTassi)
-showBar(tassoTriennale, regioni, "Tassi Triennale", rowTassi, "topleft")
+rowRapporto <- nrow(dsRapporto)
+showBar(rapTriennali, regioni, "Rapporto Triennale", rowRapporto, "topright")
 ```
 
-Il grafico ci dice che la regione con il più alto tasso di laureati triennali è l'Abruzzo(4.5) mentre la regione con il tasso più basso è la Basilicata(0.88).
+Il grafico ci dice che la regione con il numero più alto di laureati triennali è la Lombardia(14.82) mentre la regione con il rapporto più basso è la Valle d'Aosta(0.12).
 
-## 2.2 Grafico dei tassi dei laureati magistrali
-```{r}
-showBar(tassoMagistrale, regioni, "Tassi Magistrale", rowTassi, "topright")
+## 2.2 Grafico del rapporto dei laureati magistrali
+```{r echo=FALSE}
+showBar(rapMagistrali, regioni, "Rapporto Magistrale", rowRapporto, "topright")
 ```
 
-I tassi per i laureati magistrali si abbassano, questo è normale perchè bisogna considare il fatto che la popolazione resta sempre la stessa ma il numero di laureati Magistrali è molto più basso rispetto a quello dei laureati triennali.  
-Il tasso più alto viene registrato in Emilia-Romagna(2.01), l'Abruzzo che aveva il più alto tasso di laureati Triennali continua ad avere un tasso abbastanza alto pari a 1.88, il tasso più basso viene registrato dalla Valle d'Aosta con un tasso di laureati magistrali pari a 0.09.
+Il rapprto più alto viene registrato in ancora in Lombardia(15.08), il rapporto più basso viene registrato dalla Valle d'Aosta con un rapporto di laureati magistrali pari a 0.01.
 
-## 2.3 Grafico dei tassi dei laureati a ciclo unico
-```{r}
-showBar(tassoUnico, regioni, "Tassi ciclo unico", rowTassi,"topleft")
+## 2.3 Grafico del rapporto dei laureati a ciclo unico
+```{r echo=FALSE}
+showBar(rapUnico, regioni, "Rapporto ciclo unico", rowRapporto,"topleft")
 ```
 
-Anche in questo caso i tassi si abbassano ulteriormente dato che i laureati a ciclo unico per ogni regione sono molto meno rispetto a laureati Triennali e Magistrali.  
-La regione con il tasso più alto è di nuovo l'Abruzzo con 0.93 mentre la regione con il tasso più basso è la Valle d'Aosta con 0.02.
+La regione con il rapporto più alto è di nuovo la Campania con 11.68 mentre la regione con il rapproto più basso è la Valle d'Aosta con 0.01.
 
-## 2.4 Grafico dei tassi dei laureati con il vecchio ordinamento
-```{r}
-showBar(tassoVecchio, regioni, "Tasso vecchio ordinamento", rowTassi, "topright")
+## 2.4 Grafico del rapporto dei laureati con il vecchio ordinamento
+```{r echo=FALSE}
+showBar(rapVecchio, regioni, "Rapporto vecchio ordinamento", rowRapporto, "topright")
 ```
-Per i laureati registramo i tassi più bassi di tutti dato che il numero di totale di laureati con il vecchio ordinamento in Italia nel 2016 è pari a 2727. La regione con il tasso più alto resta l'Abruzzo con 0.10, il tasso più basso si registra in Umbria avente un tasso pari a 0.
+
+La regione con il rapporto più alto è il Lazio 14.70, il rapporto più basso si registra in Umbria avente un rapproto pari a 0.
 
 # 3. Diagramma di Pareto
 La legge del Principio di Pareto(Legge dell'80/20) afferma che _"la maggior parte degli effetti dipendono da un numero ristretto di cause"_. Per costruire il diagramma di Pareto occorre classificare i dati, ordinarli, disegnare un grafico a barre, aggiungere la linea cumulativa e aggiungere le informazioni di base.  
 Come dati da classificare è stato scelto il totale dei tassi di laureti italiani, di seguito viene mostrata la funzione utilizzata per costruire il diagramma.
-```{r eval=FALSE, echo=TRUE}
-showPareto <- function(totale, main, rows){
-    #ordiniamo il dataset
-    ordinato <- dsTassi[order(dsTassi$Totale, decreasing = TRUE),]
-    #prendiamo le regioni ordinate
-    lbls <- rownames(ordinato)
-    #prendiamo il totale
-    ordinato <- ordinato$Totale
-    freqRel <- prop.table(ordinato)
-    app <- data.frame(ordinato)
-    pal<- distinctColorPalette(rows)
-    x<- barplot(freqRel, ylim= c(0, 1.5), main = main, col=pal, axisname = FALSE)
-    axis(1, las=2, hadj= 0.6, at=x, labels=lbls, line=1, col="transparent")
-    lines(x, cumsum(freqRel), type = "b", pch=16)
-    text(x-0.2, cumsum(freqRel) + 0.03, paste(format(cumsum(freqRel)*100, digits = 3), "%"))
-}
 
-showPareto(totaleTassi, "Diagramma di Pareto di tutti i laureati nel 2016", rowTassi)
+```{r}
+pareto
 ```
 
+```{r eval=FALSE, echo=TRUE}
+pareto("Diagramma di Pareto di tutti i laureati nel 2016", rowRapporto)
+```
+
+
 \begin{figure}[h]
-\includegraphics{../img/pareto.png}
+\includegraphics{../img/pareto2.png}
 \caption{Pareto dei laureati italiani}
 \end{figure}
+
+
 Dal grafico si evince che:
 
-- l'8.56% dei laureati italiani è abruzzese
-- il 75.89% dei laureati italiani è abruzzese, romagnolo, laziale, marchigiano, umbro, friulano, toscano, campano, veneto, piemontese, molisano, alto adesino, lombardo
-- il 15,55% dei laureati italiani vive nelle restanti sette regioni
+- l'12.6% dei laureati italiani è lombardo
+- il 78.5% dei laureati italiani è lombardo, laziale, romagnolo, campano, siculo, toscano, piemontese, veneto
+- l' 8.9% dei laureati italiani vive nelle restanti uncidi regioni
 
 Possiamo dire che il principio di Pareto non è soddisfatto perchè l'80% dei laureati esce dal più del 50% delle università sparse per le varie regioni(invece che nel 20%).
 
@@ -173,16 +153,16 @@ La correlazione tra le variabili quantitative si ricava tramite la **covarianza*
 Il **coefficiente di correlazione** ci consente di misurare la "forza" del legame fra le due variabili prese in esame.  
 Le variabili prese in esame sono:
 
-- tasso di laureati magistrali dipendente
-- tasso di laureati triennali indipendente
+- rapporto dei laureati magistrali dipendente
+- rapporto dei laureati triennali indipendente
 
 Le due variabili presentano una **covarianza** pari a 
-```{r echo=TRUE, eval=TRUE}
-cov(tassoTriennale, tassoMagistrale)
+```{r echo=TRUE}
+cov(rapTriennali, rapMagistrali)
 ```
 e un **coefficiente di correlazione** pari a 
-```{r echo=TRUE, eval=TRUE}
-cor(tassoTriennale, tassoMagistrale)
+```{r echo=TRUE}
+cor(rapTriennali, rapMagistrali)
 ```
 Possiamo notare che la covarianza è positiva quindi possiamo dire che i valori delle due variabili sono correlati e che tendono a variare insieme, anche il coefficiente di correlazione è positivo e assume un valore molto prossimo ad 1 questo ci da una ulteriore conferma della bontà di questo legame.
 
@@ -193,18 +173,18 @@ $$Y =  \alpha + \beta X$$
 Dove $\alpha$ è l'**intercetta** e $\beta$ è il **coefficiente angolare**. L'intercetta corrisponde all'ordinata del punto di intersezione tra la retta interpolante e l'asse delle ordinate. Il coefficiente angolare indica la pendenza della retta un coefficiente angolare positivo indica una retta crescente, mentre, un coefficiente angolare negativo indica una retta descrescente. 
 
 ## 4.2 Costruzione del modello di regressione lineare semplice
-```{r echo=TRUE, eval=TRUE}
-slr <- lm(tassoTriennale~tassoMagistrale)
+```{r}
+slr <- lm(rapTriennali~rapMagistrali)
 print(slr)
 ```
 Possiamo notare che il coefficiente angolare è positivo quindi avremo una retta crescente.  
 Di seguito viene mostrato lo script fatto per mostrare lo scatterplot della retta di regressione, per una migliore visualizzazione i dati riguardanti i tassi triennali e magistrali sono stati scalati utilizzando la funzione **scale()**.
-```{r echo=TRUE, eval=TRUE}
-scaleTriennale <- scale(tassoTriennale)
-scaleMagistrale <- scale(tassoMagistrale)
+```{r echo=TRUE}
+scaleTriennale <- scale(rapTriennali)
+scaleMagistrale <- scale(rapMagistrali)
 modelloScalato <- lm(scaleTriennale~scaleMagistrale)
-plot(scaleTriennale, scaleMagistrale, main= "Retta di regressione", xlab="tasso Triennale",
-ylab = "tasso Magistrale", col="red")
+plot(scaleTriennale, scaleMagistrale, main= "Retta di regressione", xlab="rapporto Triennale",
+ylab = "rapporto Magistrale", col="red")
 abline(modelloScalato)
 stime <- fitted(modelloScalato)
 segments(scaleTriennale, stime, scaleTriennale, scaleMagistrale, col="magenta")
@@ -216,11 +196,11 @@ Dal grafico si evince che il campione è positivamente correlato in quanto abbia
 ## 4.3 Grafico dei residui
 Con l'analisi dei residui effettuiamo una analisi più accurata sul come la retta interpola i dati e di come i residui si dispongono intorno alla retta interpolante influenzandone la posizione. I residui sono posti sulle ordinate mentre e i valori della variabile indipendente sono disposti sull'asse delle ascisse.  
 Come prima cosa vengono calcolati i residui del modello con la funzione **resid()** dopodichè viene stampato il grafico dei residui
-```{r echo=TRUE, eval=TRUE}
+```{r}
 residui<-(resid(slr))
-plot(tassoMagistrale, residui, main = "Grafico dei residui", xlab = "Tasso Magistrale",
+plot(rapMagistrali, residui, main = "Grafico dei residui", xlab = "Rapporto Magistrale",
 ylab = "Residui", col= "red")
-text(x= tassoMagistrale, y=residui+0.05, labels = regioni, cex=0.6)
+text(x= rapMagistrali, y=residui+0.05, labels = regioni, cex=0.6)
 abline(h=0, col="blue", lty=2)
 ```
 
@@ -244,11 +224,11 @@ In questo paragrafo verranno calcolati i quantili per le varie colonne del datas
 - 75% sta a Q3
 - 100% sta a Q4
 
-```{r echo = TRUE, eval = TRUE}
-quantile(tassoTriennale)
-quantile(tassoMagistrale)
-quantile(tassoUnico)
-quantile(tassoVecchio)
+```{r}
+quantile(rapTriennali)
+quantile(rapMagistrali)
+quantile(rapUnico)
+quantile(rapVecchio)
 ```
 
 ## 5.3 Boxplot
@@ -267,21 +247,25 @@ Il boxplot può essere utilizzato anche per esaminare altre caratteristiche dell
 - **dispersione** possiamo dedurre la dispersione esaminando la distanza che passa da Q1 a Q3  
 
 Per mostrare i boxplot è stata sviluppata la funzione **showBarPlot**
-```{r, eval=FALSE}
-showBoxPlot <- function(label, tasso, name, title, color, lim){
-    boxplot.with.outlier.label(label_name = label, tasso,
+
+```{r echo=FALSE, eval= FALSE, warning=FALSE}
+#script per mettere i boxplot in una sola pagina
+par(mfrow=c(2,2))
+#la funnzione showBoxPlot
+showBoxPlot <- function(label, rapporto, name, title, color, lim){
+    boxplot.with.outlier.label(label_name = label, rapporto,
     names=c(name), main=title,
     col= color, pars=list(ylim=c(0,lim)))
 }
-#esempio di chiamata della funzione
-showBoxPlot(regioni, tassoTriennale, "Tasso Triennale",
-            "Boxplot tasso laureati triennali", "green", 5)
-showBoxPlot(regioni, tassoMagistrale, "Tasso Magistrale",
-            "Boxplot tasso laureati magistrali", "yellow", 3)
-showBoxPlot(regioni, tassoUnico, "Tasso Ciclo Unico",
-            "Boxplot tasso laureati ciclo unico", "blue", 2)
-showBoxPlot(regioni, tassoVecchio, "Tasso Vecchio Ordinamento",
-            "Boxplot tasso laureati vecchio ordinamento", "purple", 0.3)
+#chiamate alla funzione
+showBoxPlot(regioni, rapTriennali, "Rapporto Triennale",
+            "Boxplot triennali", "green", 15)
+showBoxPlot(regioni, rapMagistrali, "Rapporto Magistrale",
+            "Boxplot magistrali", "yellow", 16)
+showBoxPlot(regioni, rapUnico, "Rapporto Ciclo Unico",
+            "Boxplot ciclo unico", "blue", 12)
+showBoxPlot(regioni, rapVecchio, "Rapporto Vecchio Ordinamento",
+            "Boxplot vecchio ordinamento", "purple", 15)
 ```
 
 La funzione showBar per disegnare i boxplot con le label usa la funziona **boxplot.with.outlier.label** presa da __\href{https://raw.githubusercontent.com/talgalili/R-code-snippets/master/boxplot.with.outlier.label.r}{questo repository}__.  
@@ -295,20 +279,21 @@ Showbar prende in input:
 * lunghezza dell'asse y
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \begin{center}
-\includegraphics{../img/boxplot.png}
+\includegraphics{../img/boxplot2.png}
 \caption{Boxplot dei laureati}
 \end{center}
 \end{figure}
+\newpage <!--RICORDATELO!!!! -->
 
 ## 5.4 Analisi del boxplot
+<!--TODO da aggiustare-->
 Analizzando il boxplot possiamo arrivare alle seguenti conclusioni:
 
-* l'unico outlier è presente nella colonna dei tassi triennali ed è la regione Abruzzo con 4.5
 * i dati risultano avare una maggiore dispersione nella colonna dei laureati triennali
-* possiamo notare la compattezza dei dati relativi alle colonne del tasso dei laureati a ciclo unico e del tasso dei laureati con vecchio ordinamento
-* per i laureati magistrali la maggior parte dei dati si trova alla sinistra della mediana
+* possiamo notare la compattezza dei dati relativi alle colonne dei laureati a ciclo unico e dei laureati con vecchio ordinamento
+* per i laureati magistrali la maggior parte dei dati si trova più in basso rispetto alla mediana
 
 # 6. Analisi dei cluster
 L'analisi dei cluster è una metodologia che permette di raggruppare un campio ampio vari sottoinsiemi più piccoli detti cluster. L'obettivo di questa analisi è quello di **raggruppare** fra loro elementi simili.
@@ -347,25 +332,25 @@ Fra gli svantaggi c'è il fatto che la classificazione finale può essere influe
 
 ### 6.3.1 Implementazione k-means
 Il metodo k-means è stato implementato con la funzione **mykm** che vado a mostrare di seguito
-```{r, echo=FALSE, eval=TRUE}
+```{r, echo=FALSE}
 print(mykm)
 ```
 
 La funzione prende in input un dataframe(**ds**), il numero di cluster(**k**) e il numero di iterazioni da svolgere(**iter**) sceglie i centroidi come punto di riferimento e rappresenta graficamente i cluster.
 Il dataframe dato in input corrisponde alle prime due colonne del dataset dei tassi dei laureati quindi al tasso di laureati triennali e magistrali, il numero di cluster va da 2 a 5, e le iterazioni sono sempre 10.
 
-```{r, echo=TRUE, eval=TRUE}
-mykm(dsTassi[1:2], 2, 10)
+```{r}
+mykm(dsRapporto[1:2], 2, 10)
 
-mykm(dsTassi[1:2], 3, 10)
+mykm(dsRapporto[1:2], 3, 10)
 
-mykm(dsTassi[1:2], 4, 10)
+mykm(dsRapporto[1:2], 4, 10)
 
-mykm(dsTassi[1:2], 5, 10)
+mykm(dsRapporto[1:2], 5, 10)
 ```
 
 ## 6.4 Osservazioni finali
-I valori di non omogeneità migliori si ottengo nella partizionamento con k = 4 e k = 5 infatti i loro valori sono rispettivamente 87.0% e 90.9%, si è decisio di fermarsi con la divisione in cluster con un k = 5 in quanto già l'output del k-means con 5 cluster ci mostara un alto grado di non omogeneità pari al 90.9% ma possiamo notare(sia con k=4 che con k=5) che ci sono dei cluster molto piccoli composti da uno e due elementi e quindi l'utilità del cluster si va a perdere. Quindi si è deciso di prendere in esame le partizioni con 2 e 3 cluster che hanno come valore di non omogeneità rispettivamente 55.6% e 73.1% le misure ottenute da questi due tipi di partizionamento verranno poi confrontate con le misure ottenute dai metodi gerarchici.
+I valori di non omogeneità migliori si ottengo nella partizionamento con k = 4 e k = 5 infatti i loro valori sono rispettivamente 94.4.0% e 95.4%, si è decisio di fermarsi con la divisione in cluster con un k = 5 in quanto già l'output del k-means con 5 cluster ci mostara un alto grado di non omogeneità pari al 95.4% ma possiamo notare(sia con k=4 che con k=5) che ci sono dei cluster molto piccoli composti da uno e due elementi e quindi l'utilità del cluster si va a perdere. Quindi si è deciso di prendere in esame le partizioni con 2 e 3 cluster che hanno come valore di non omogeneità rispettivamente 76.8% e 89.4% le misure ottenute da questi due tipi di partizionamento verranno poi confrontate con le misure ottenute dai metodi gerarchici.
 
 ## 6.5 Metodi gerarchici
 I metodi gerarchici sono di cinque tipi di:
@@ -380,11 +365,11 @@ I metodi del centroide e della mediana non calcolano la matrice della distanza p
 L'applicazione dei metodi gerarchici verrà svolta applicando la distanza euclidea, ogni metodo gerarchico viene calcolato dividendo i dati prima in due e poi in tre cluster in modo tale da poter confrontare i risultati ottenuti con il risultato del metodo non gerarchico k-means.  
 Per calcolare i vari tipi di metodi gerarchici è stato realizzato lo script **metodiGerarchici()** che viene mostrato di seguito
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval = FALSE}
 metodiGerarchici
 ```
 
-La funzione prende in input il dataset(dsTassi[1:2]), il numero di cluster, il metodo di agglomerazione da applicare(legame singolo, completo, medio, centroide o mediana) e il titolo da dare al grafico. La funzione calcola la matrice delle distanze con la funzione **dist()**, la funzione **hclust()** crea il dendrogramma prendendo come parametro la matrice delle distanze e il metodo di agglomerazione, infine plotta il dendrogramma.
+La funzione prende in input il dataset(dsRapporti[1:2]), il numero di cluster, il metodo di agglomerazione da applicare(legame singolo, completo, medio, centroide o mediana) e il titolo da dare al grafico. La funzione calcola la matrice delle distanze con la funzione **dist()**, la funzione **hclust()** crea il dendrogramma prendendo come parametro la matrice delle distanze e il metodo di agglomerazione, infine plotta il dendrogramma.
 
 ## 6.5.1 Metodo del legame singolo
 Con questo metodo la distanza fra il gruppo $G_1$(contenente $n_1$ individui) e il gruppo $G_2$(contenente $n_2$ individui) viene definita come la minima distanza fra tutte le $n_1n_2$ distanze calcolabili fra ogni individuo di $G_1$ e ogni individuo di $G_2$.  
@@ -396,19 +381,19 @@ Se due individui riusultano simili verrà costruito un cluster con questi due el
 
 ```{r echo=FALSE}
 cluster2Table <- buildClusterTable(2)
-cluster2Table$B.T[1] <- "55.6%"
+cluster2Table$B.T[1] <- "76.8%"
 cluster3Table <- buildClusterTable(3)
-cluster3Table$B.T[1] <- "73.1%"
+cluster3Table$B.T[1] <- "89.4%"
 
 #metodo del legame singolo 2 cluster
-metodiGerarchici(dsTassi[1:2], regioni, 2, "single", "Metodo del legame singolo")
-cls <- applyClustering(dsTassi[1:2], "euclidean", "single", 2)
+metodiGerarchici(dsRapporto[1:2], regioni, 2, "single", "Metodo del legame singolo")
+cls <- applyClustering(dsRapporto[1:2], "euclidean", "single", 2)
 paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster2Table$B.T[2] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 
 #metodo del legame singolo 3 cluster
-metodiGerarchici(dsTassi[1:2], regioni, 3, "single", "Metodo del legame singolo")
-cls <- applyClustering(dsTassi[1:2], "euclidean", "single", 3)
+metodiGerarchici(dsRapporto[1:2], regioni, 3, "single", "Metodo del legame singolo")
+cls <- applyClustering(dsRapporto[1:2], "euclidean", "single", 3)
 paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster3Table$B.T[2] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 
@@ -419,14 +404,14 @@ Questo metodo definisce la distanza fra $G_1$ e $G_2$ come la distanza massima f
 
 ```{r echo=FALSE}
 #metodo del legame completo 2 cluster
-metodiGerarchici(dsTassi[1:2], regioni, 2, "complete", "Metodo del legame completo")
-cls <- applyClustering(dsTassi[1:2], "euclidean", "complete", 2)
+metodiGerarchici(dsRapporto[1:2], regioni, 2, "complete", "Metodo del legame completo")
+cls <- applyClustering(dsRapporto[1:2], "euclidean", "complete", 2)
 paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster2Table$B.T[3] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 
 #metodo del legame completo 3 cluster
-metodiGerarchici(dsTassi[1:2], regioni, 3, "complete", "Metodo del legame completo")
-cls <- applyClustering(dsTassi[1:2], "euclidean", "complete", 3)
+metodiGerarchici(dsRapporto[1:2], regioni, 3, "complete", "Metodo del legame completo")
+cls <- applyClustering(dsRapporto[1:2], "euclidean", "complete", 3)
 paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster3Table$B.T[3] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 ```
@@ -436,14 +421,14 @@ In questo caso la distanza fra i due gruppi viene definita come la media aritmet
 
 ```{r echo=FALSE}
 #metodo del legame medio 2 cluster
-metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "average", "Metodo del legame medio")
-cls <- applyClustering(dsTassi[1:2], "euclidean", "average", 2)
+metodiGerarchici(dsRapporto[1:2], regioni, 2, "average", "Metodo del legame medio")
+cls <- applyClustering(dsRapporto[1:2], "euclidean", "average", 2)
 paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster2Table$B.T[4] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 
 #metodo del legame medio 3 cluster
-metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "average", "Metodo del legame medio")
-cls <- applyClustering(dsTassi[1:2], "euclidean", "average", 3)
+metodiGerarchici(dsRapporto[1:2], regioni, 3, "average", "Metodo del legame medio")
+cls <- applyClustering(dsRapporto[1:2], "euclidean", "average", 3)
 paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster3Table$B.T[4] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 ```
@@ -453,14 +438,14 @@ Con il metodo del centroide la distanza fra i due gruppi viene definita come la 
 
 ```{r echo=FALSE}
 #metodo del centroide 2 cluster
-metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "centroid", "Metodo del centroide")
-cls <- applyClustering(dsTassi[1:2], "euclidean", "centroid", 2)
+metodiGerarchici(dsRapporto[1:2], regioni, 2, "centroid", "Metodo del centroide")
+cls <- applyClustering(dsRapporto[1:2], "euclidean", "centroid", 2)
 paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster2Table$B.T[5] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 
 #metodo del centroide 3 cluster
-metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "centroid", "Metodo del centroide")
-cls <- applyClustering(dsTassi[1:2], "euclidean", "centroid", 3)
+metodiGerarchici(dsRapporto[1:2], regioni, 3, "centroid", "Metodo del centroide")
+cls <- applyClustering(dsRapporto[1:2], "euclidean", "centroid", 3)
 paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster3Table$B.T[5] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 ```
@@ -470,14 +455,14 @@ Il metodo della mediana è simile a quello del centroide ma in questo caso la pr
 
 ```{r echo=FALSE}
 #metodo del centroide 2 cluster
-metodiGerarchici(scale(dsTassi[1:2]), regioni, 2, "median", "Metodo della mediana")
-cls <- applyClustering(dsTassi[1:2], "euclidean", "median", 2)
+metodiGerarchici(dsRapporto[1:2], regioni, 2, "median", "Metodo della mediana")
+cls <- applyClustering(dsRapporto[1:2], "euclidean", "median", 2)
 paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster2Table$B.T[6] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 
 #metodo del centroide 3 cluster
-metodiGerarchici(scale(dsTassi[1:2]), regioni, 3, "median", "Metodo del centroide")
-cls <- applyClustering(dsTassi[1:2], "euclidean", "median", 3)
+metodiGerarchici(dsRapporto[1:2], regioni, 3, "median", "Metodo del centroide")
+cls <- applyClustering(dsRapporto[1:2], "euclidean", "median", 3)
 paste("Rapporto tra omogeneità cluster e omogenetà totale, B/T= ", round(cls$bt*100, digits = 2), "%", sep="")
 cluster3Table$B.T[6] <- paste(round(cls$bt*100, digits = 2), "%", sep="")
 ```
@@ -491,9 +476,9 @@ kable(cluster3Table)
 
 Conclusioni:
 
-* La misura di non omogeneità **peggiore** si ottiene con i metodi gerarchici del legame singolo, medio, centroide e mediana su 2 cluster(28.24%)
-* La misura di non omogeneità **migliore** si ottiene con il metodo k-means su 3 cluster 73.1%
-* Altre misure di non omogeneità accettabili sono quelle con un valore superiore al 70% esse sono quelle ottenute con il metodo k-means su 3 cluster e con il metodo gerarchico del legame completo con 3 cluster
+* La misura di non omogeneità **peggiore** si ottiene con i metodi gerarchici del legame singolo su 2 cluster(28.69%)
+* La misura di non omogeneità **migliore** si ottiene con il metodo k-means su 3 cluster 89.4%
+* Altre misure di non omogeneità accettabili sono quelle con un valore superiore al 70% quindi oltre al metodo del legame singolo su 2 cluster non possiamo accettare neanche la misura ottunuta con il metodo del legame singolo su 3 cluster.
 
 # 7. Inferenza statistica
 Una indagine statisica si effettua su una popolazione che può essere finita o infinita, le caratteristiche della popolazione possono essere ottenute osservando la totalità della popolazione oppure un sottoinsieme di essa(un campione) se ci troviamo di fronte a una popolazione infita possiamo studiare le sue caratteristiche solamente attraverso un suo campione.  
@@ -514,13 +499,13 @@ write.table(popolazioneAtleti, file = "dataset/sample.csv", row.names = FALSE, s
 Per calcolare la  densità di una variabile aleatoria $X$ è data dalla seguente formula:
 $$f_X(x) = \frac{1}{\sigma \sqrt{2\pi }} exp\left \{ - \frac{(x - \mu)^2)}{2 \sigma^2} \right \}, x \epsilon \mathbb{R} (\mu \epsilon \mathbb{R}, \sigma > 0)$$
 
-```{r echo=FALSE, eval=TRUE}
+```{r echo=FALSE, eval=FALSE}
 popolazioneAtleti <- read.csv(file="../dataset/sample.csv", header=TRUE, sep=";")
 ```
 
 la densità di __popolazioneAtleti__ in viene calcolata dal seguente script R
 
-```{r}
+```{r eval=FALSE}
 valMedio <- mean(popolazioneAtleti$km)
 stdDev <- sd(popolazioneAtleti$km)
 print(paste("Valore medio = ", round(valMedio, digits=2),
@@ -537,7 +522,7 @@ abline(v=valMedio, col= "red", lwd=2, lty = 2)
 Per calcolare la **densità** come prima cosa calcoliamo il valore medio e deviazione standard del campione, infine con la funzione __curve()__ che prende come input la densità normale del campione calcolata con la funzione __dnorm(valore medio, deviazione standard)__ e i parametri __from__ e __to__ che indicano l'intervallo del grafico, sul grafico è stata anche riportata la retta che rappresenta il valore medio, si può notare che il valore medio(23.27) coincide con massimo della curva, essendoci una deviazione standar alta(3.04) possiamo dire che al decrescere della deviazione standard la curva si appiattirà.  
 Per calcolare la **funzione di distribuzione normale** si usa la funzione __pnorm()__ di R, di seguito viene mostrata il codice per calcolare la funzione di distribuzione normale sul campione.
 
-```{r}
+```{r eval = FALSE}
 titolo = paste("km fatti in una settimana di allenamento mu =",
                round(valMedio, digits = 2),
                ", sigma =", round(stdDev, digits = 2)
@@ -550,7 +535,7 @@ abline(v=28, col= "red", lwd= 1, lty = 2)
 Notiamo che la funzione cresce nell'intervallo che va da 20 a 28 per poi arrivare ad 1 intorno al 29 per poi stabilizzarsi.  
 Possiamo anche calcolare i quantili del campione preso in analisi grazie alla funzione R __qnorm()__ 
 
-```{r}
+```{r eval = FALSE}
 q <- c(0, 0.25, 0.50, 0.75, 1)
 qnorm(q, mean = valMedio, sd = stdDev)
 ```
@@ -566,12 +551,12 @@ Possiamo stimare i parametri non noti con due metodi, **metodo dei momenti** **m
 del metodo stimatore è indifferente perchè entrambi i metodi ci porteranno allo stesso risultato.  
 Troviamo uno stimatore per il valore medio(media campionaria)$\mu$ e uno per la varianza $\sigma^2$
 
-```{r}
+```{r eval = FALSE}
 mu <- valMedio
 sigmaQ <- (length(popolazioneAtleti$km)-1) * var(popolazioneAtleti$km)/length(popolazioneAtleti$km)
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval = FALSE}
 print(paste("stimatore valore medio mu =", mu, ", stimatore varianza sigma^2 =", sigmaQ))
 ```
 
@@ -586,7 +571,7 @@ In una distribuzione normale si cerca di individuare un intervallo di confidenza
 
 Tutti i casi elencati in precedenza sono riassunti nel seguente grafico:
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval = FALSE}
 curve(dnorm(x,mean=0,sd=1),from=-3, to=3,axes=FALSE,ylim=c(0,0.5), xlab="",ylab="",main="Densità normale standard")
 text(0,0.05,expression(1-alpha))
 axis(1,c(-3,-1,0,1,3),c("",expression(-z[alpha/2]), 0,expression(z[alpha/2]),""))
@@ -611,7 +596,7 @@ Utilizziamo il **metodo pivotale** e consideriamo una variabile aleatoria con va
 La variabile aleatoria che andiamo a considerare è: $$Z_n = \frac{\overline{X}_n -\mu}{\sigma / \sqrt{n}}$$
 Di seguito viene riportato lo script R per determinare l'intervallo di confidenza
 
-```{r}
+```{r eval = FALSE}
 #grado di confidenza
 alpha <- 1 - 0.95
 limite <- qnorm(1 - alpha/2, mean = 0, sd = 1)
@@ -630,7 +615,7 @@ print(paste("r1 =", round(r1, digits = 2),
 è stato assegnato un intervallo di confidenza pari a 0.95 quindi la regione di accettazione sarà di 0.95 di conseguenza la regione di rifiuto sarà di 0.25. Con la funzione __qnorm()__ sono stati calcolati i limiti inferiori e superiori della variabile aleatoria.  
 Di seguito viene riportato il grafico della densità normale standard con i valori che riguardano il nostro intervallo di confidenza. Infine è stata calcolata la **stima dell'intervallo di confidenza** i valori sono stati salvati in __r1__ e __r2__, possiamo notare che l'intervallo di stima va da 22.7 a 23.84 e che il valore medio è compreso in questo intervallo.
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval = FALSE}
 plotDensita("Densità normale standard", 0.95, 0.05, limite)
 ```
 
@@ -638,7 +623,7 @@ plotDensita("Densità normale standard", 0.95, 0.05, limite)
 Per questo studio verrà utilizzata la **densità di Student con n-1 gradi di libertà**. Anche in questo caso per determinare il valore medio possiamo utilizzare il metodo pivotale con la seguente variabile aleatoria: $$T_n = \frac{\overline{X}_n -\mu}{S_n / \sqrt{n}}$$.  
 In questo caso il calcolo dei limiti viene fatto con la funzione __qt()__ e poi possiamo andare a calcolare la regione ammissibile, di seguito viene riportato lo script per il calcolo della stima dell'intervallo in cui ricade $\mu$
 
-```{r}
+```{r eval = FALSE}
 alpha <- 1 - 0.99
 limite <- qt(1 - alpha/2, df = size-1)
 print(paste("limite inf. =", round(-limite, digits = 2),
@@ -655,7 +640,7 @@ print(paste("r1 =", round(r1, digits = 2),
 Avendo aumentato i margini di accettazione(da 0.95 a 0.99) la diretta conseguenza sarà il fatto che i margini di rifiuto saranno più bassi. La ragione di accattazione va da -2.62 a 2.62, con una grado di fiducia molto alto la stima dell'intervallo di confidenza è più ampia infatti va da 22.51 a 24.03 e anche in questo caso il valore medio ricade nell'intervallo.  
 Di seguito viene riportato il grafico della densità normale standard con i valori che riguardano il nostro intervallo di confidenza. Infine è stata calcolata la **stima dell'intervallo di confidenza** i valori sono stati salvati in __r1__ e __r2__, possiamo notare che l'intervallo di stima va da 22.51 a 24.03 e che il valore medio è compreso in questo intervallo.
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval = FALSE}
 plotDensita("Densità di Student con n-1 gradi di libertà", 0.99, 0.01, limite)
 ```
 
@@ -664,7 +649,7 @@ Per determinare l'intervallo di confidenza per $\sigma^2$ con $\mu$ nota utilizz
 $$V_n = \sum_{i=1}^{n}\left ( \frac{X_i - \mu}{\sigma} \right )^2$$
 Essa dipende dal campione casuale e dal parametro non noto $\sigma^2$ ed è distribuita con la legge **$\chi^2$ con n gradi di libertà**.  
 Di seguito viene mostrato lo script R per calcolare l'intervallo di confidenza
-```{r}
+```{r eval = FALSE}
 varianza <- var(popolazioneAtleti$km)
 print(paste("varianza =", round(varianza, digits = 2)))
 alpha <- 1 - 0.95
@@ -681,7 +666,7 @@ print(paste("r1=", round(r1, digits = 2),
 
 Il grado di fiducia assegnato in questo caso è 0.95, in seguito è stata calcolata la densità con il metodo del **$\chi^2$ con n gradi di libertà** dove n è pari alla grandezza del campione(__size__). La densità è stata calcolata sia per il limite superiore che per quello inferiore, i risultati sono riportati nello script soprastante. Infine è stata calcolata la stima per dell'intervallo di confidenza di grado 0.95, l'intervallo va da 7.21 a 12.26 e la varianza(9.25) è compresa in tale intervallo. Di seguito viene riportato il grafico
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval = FALSE}
 curve(dchisq(x, df= 6), from = 0, to = 12, axes = FALSE, ylim=c(0,0.15),
       xlab = "", ylab = "", main="Densità chiquadro con n gradi di libertà")
 text(4, 0.02, 0.95)
@@ -706,7 +691,7 @@ Per determinare un intervallo di confidenza da 1 a $\infty$ per la varianza nel 
 $$Q_n = \frac{(n-1)S^2_n}{\sigma^2} = \frac{1}{\sigma^2} \sum_{i=1}^{n}(X_i - \overline{X}_n)^2$$
 Questa variabile dipende dal campione e dal parametro non noto $\sigma^2$ ed è distribuita con la legge del $\chi^2$ con n-1 gradi di libertà.  
 Di seguito viene mostrato lo script per calcolare il limite superiore e inferiore per questo intervallo
-```{r}
+```{r eval = FALSE}
 alpha <- 1 - 0.95
 limInf <- qchisq(alpha/2, df = size-1)
 limSup <- qchisq(1 - alpha/2, df = size-1)
@@ -721,7 +706,7 @@ print(paste("r1=", round(r1, digits = 2),
 Il grado di fiducia è rimasto 0.95, il calcolo del limite inferiore e superiore è stato fatto con il metodo del $\chi^2$ con n-1 gradi di libertà, il limite inferiore è 82 mentre quello superiore è 139.78.   **L'intervallo di confidenza** va da 7.21 a 12.29, la varianza è di 9.24 quindi possiamo dire che anche in questo caso la varianza è compresa nell'intervallo.  
 Di seguito viene mostrato il grafico.
 
-```{r, echo=FALSE}
+```{r eval = FALSE, echo=FALSE}
 curve(dchisq(x, df= 6), from = 0, to = 12, axes = FALSE, ylim=c(0,0.15),
       xlab = "", ylab = "", main="Densità chiquadro con n-1 gradi di libertà")
 text(4, 0.02, 0.95)
@@ -752,7 +737,7 @@ $A_{180} = 200, B_{230}=150$
 $\sigma^2_a= 14400, \sigma^2_a=6400$  
 Di seguito viene riportato lo script per calcolare la differenza dei valori medi
 
-```{r}
+```{r eval = FALSE}
 alpha <- 1-0.99
 zAmezzi <- qnorm(1-alpha/2, mean = 0, sd = 1)
 round(zAmezzi, digits = 2)
@@ -779,7 +764,7 @@ Formuliamo le ipotesi:
 
 Il $\chi^2$ test mira a riggettare $H_0$ al fine di accettare $H_1$.  
 Siamo intenzionati a verificare se il campione dell'altezza(espressa in cm) di 105 persone di venticinque anni sia adatto ad una distribuzione normale
-```{r warning=FALSE}
+```{r eval = FALSE, warning=FALSE}
 sample <- c(rep(165,15), rep(170, 25), rep(160, 10), rep(155, 25), rep(180, 30))
 n <- 105
 media <- mean(sample)
