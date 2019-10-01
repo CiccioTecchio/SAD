@@ -365,7 +365,7 @@ I metodi del centroide e della mediana non calcolano la matrice della distanza p
 L'applicazione dei metodi gerarchici verrà svolta applicando la distanza euclidea, ogni metodo gerarchico viene calcolato dividendo i dati prima in due e poi in tre cluster in modo tale da poter confrontare i risultati ottenuti con il risultato del metodo non gerarchico k-means.  
 Per calcolare i vari tipi di metodi gerarchici è stato realizzato lo script **metodiGerarchici()** che viene mostrato di seguito
 
-```{r echo=FALSE, eval = FALSE}
+```{r echo=FALSE}
 metodiGerarchici
 ```
 
@@ -490,22 +490,22 @@ Per studiare i problemi dell'inferenza statistica occorre conoscere le variabili
 ## 7.1 Variabile aleatoria normale
 La normale costituisce una distribzione limite alla quale tendono le variabili aleatoria in opportuni casi.  
 Prenderemo in esame la tematica "**chilometri di corsa percorsi da 110 atleti durante i loro allenamenti settimanali**".\footnote{per motivi di spazio il data frame popolazioneAtleti non viene mostrato nella tesina ma può essere visto lanciando il comando \textit{View(popolazioneAtleti)}} Il campione di atleti è stato  generato usando la funzione __rnorm()__. 
-```{r echo = TRUE, eval = FALSE }
+```{r echo = TRUE}
 popolazioneAtleti <- data.frame(km = floor(rnorm(110, 24, 3)))
 #salvo i dati in un CSV
-write.table(popolazioneAtleti, file = "dataset/sample.csv", row.names = FALSE, sep = ";")
+write.table(popolazioneAtleti, file = "../dataset/sample.csv", row.names = FALSE, sep = ";")
 ```
 
 Per calcolare la  densità di una variabile aleatoria $X$ è data dalla seguente formula:
 $$f_X(x) = \frac{1}{\sigma \sqrt{2\pi }} exp\left \{ - \frac{(x - \mu)^2)}{2 \sigma^2} \right \}, x \epsilon \mathbb{R} (\mu \epsilon \mathbb{R}, \sigma > 0)$$
 
-```{r echo=FALSE, eval=FALSE}
+```{r echo=FALSE}
 popolazioneAtleti <- read.csv(file="../dataset/sample.csv", header=TRUE, sep=";")
 ```
 
 la densità di __popolazioneAtleti__ in viene calcolata dal seguente script R
 
-```{r eval=FALSE}
+```{r}
 valMedio <- mean(popolazioneAtleti$km)
 stdDev <- sd(popolazioneAtleti$km)
 print(paste("Valore medio = ", round(valMedio, digits=2),
@@ -522,7 +522,7 @@ abline(v=valMedio, col= "red", lwd=2, lty = 2)
 Per calcolare la **densità** come prima cosa calcoliamo il valore medio e deviazione standard del campione, infine con la funzione __curve()__ che prende come input la densità normale del campione calcolata con la funzione __dnorm(valore medio, deviazione standard)__ e i parametri __from__ e __to__ che indicano l'intervallo del grafico, sul grafico è stata anche riportata la retta che rappresenta il valore medio, si può notare che il valore medio(23.27) coincide con massimo della curva, essendoci una deviazione standar alta(3.04) possiamo dire che al decrescere della deviazione standard la curva si appiattirà.  
 Per calcolare la **funzione di distribuzione normale** si usa la funzione __pnorm()__ di R, di seguito viene mostrata il codice per calcolare la funzione di distribuzione normale sul campione.
 
-```{r eval = FALSE}
+```{r}
 titolo = paste("km fatti in una settimana di allenamento mu =",
                round(valMedio, digits = 2),
                ", sigma =", round(stdDev, digits = 2)
@@ -535,7 +535,7 @@ abline(v=28, col= "red", lwd= 1, lty = 2)
 Notiamo che la funzione cresce nell'intervallo che va da 20 a 28 per poi arrivare ad 1 intorno al 29 per poi stabilizzarsi.  
 Possiamo anche calcolare i quantili del campione preso in analisi grazie alla funzione R __qnorm()__ 
 
-```{r eval = FALSE}
+```{r}
 q <- c(0, 0.25, 0.50, 0.75, 1)
 qnorm(q, mean = valMedio, sd = stdDev)
 ```
@@ -551,12 +551,12 @@ Possiamo stimare i parametri non noti con due metodi, **metodo dei momenti** **m
 del metodo stimatore è indifferente perchè entrambi i metodi ci porteranno allo stesso risultato.  
 Troviamo uno stimatore per il valore medio(media campionaria)$\mu$ e uno per la varianza $\sigma^2$
 
-```{r eval = FALSE}
+```{r echo = FALSE}
 mu <- valMedio
 sigmaQ <- (length(popolazioneAtleti$km)-1) * var(popolazioneAtleti$km)/length(popolazioneAtleti$km)
 ```
 
-```{r echo=FALSE, eval = FALSE}
+```{r echo=FALSE}
 print(paste("stimatore valore medio mu =", mu, ", stimatore varianza sigma^2 =", sigmaQ))
 ```
 
@@ -571,7 +571,7 @@ In una distribuzione normale si cerca di individuare un intervallo di confidenza
 
 Tutti i casi elencati in precedenza sono riassunti nel seguente grafico:
 
-```{r echo=FALSE, eval = FALSE}
+```{r echo=FALSE}
 curve(dnorm(x,mean=0,sd=1),from=-3, to=3,axes=FALSE,ylim=c(0,0.5), xlab="",ylab="",main="Densità normale standard")
 text(0,0.05,expression(1-alpha))
 axis(1,c(-3,-1,0,1,3),c("",expression(-z[alpha/2]), 0,expression(z[alpha/2]),""))
@@ -596,7 +596,7 @@ Utilizziamo il **metodo pivotale** e consideriamo una variabile aleatoria con va
 La variabile aleatoria che andiamo a considerare è: $$Z_n = \frac{\overline{X}_n -\mu}{\sigma / \sqrt{n}}$$
 Di seguito viene riportato lo script R per determinare l'intervallo di confidenza
 
-```{r eval = FALSE}
+```{r}
 #grado di confidenza
 alpha <- 1 - 0.95
 limite <- qnorm(1 - alpha/2, mean = 0, sd = 1)
@@ -615,7 +615,7 @@ print(paste("r1 =", round(r1, digits = 2),
 è stato assegnato un intervallo di confidenza pari a 0.95 quindi la regione di accettazione sarà di 0.95 di conseguenza la regione di rifiuto sarà di 0.25. Con la funzione __qnorm()__ sono stati calcolati i limiti inferiori e superiori della variabile aleatoria.  
 Di seguito viene riportato il grafico della densità normale standard con i valori che riguardano il nostro intervallo di confidenza. Infine è stata calcolata la **stima dell'intervallo di confidenza** i valori sono stati salvati in __r1__ e __r2__, possiamo notare che l'intervallo di stima va da 22.7 a 23.84 e che il valore medio è compreso in questo intervallo.
 
-```{r echo=FALSE, eval = FALSE}
+```{r echo=FALSE}
 plotDensita("Densità normale standard", 0.95, 0.05, limite)
 ```
 
@@ -623,7 +623,7 @@ plotDensita("Densità normale standard", 0.95, 0.05, limite)
 Per questo studio verrà utilizzata la **densità di Student con n-1 gradi di libertà**. Anche in questo caso per determinare il valore medio possiamo utilizzare il metodo pivotale con la seguente variabile aleatoria: $$T_n = \frac{\overline{X}_n -\mu}{S_n / \sqrt{n}}$$.  
 In questo caso il calcolo dei limiti viene fatto con la funzione __qt()__ e poi possiamo andare a calcolare la regione ammissibile, di seguito viene riportato lo script per il calcolo della stima dell'intervallo in cui ricade $\mu$
 
-```{r eval = FALSE}
+```{r}
 alpha <- 1 - 0.99
 limite <- qt(1 - alpha/2, df = size-1)
 print(paste("limite inf. =", round(-limite, digits = 2),
@@ -640,7 +640,7 @@ print(paste("r1 =", round(r1, digits = 2),
 Avendo aumentato i margini di accettazione(da 0.95 a 0.99) la diretta conseguenza sarà il fatto che i margini di rifiuto saranno più bassi. La ragione di accattazione va da -2.62 a 2.62, con una grado di fiducia molto alto la stima dell'intervallo di confidenza è più ampia infatti va da 22.51 a 24.03 e anche in questo caso il valore medio ricade nell'intervallo.  
 Di seguito viene riportato il grafico della densità normale standard con i valori che riguardano il nostro intervallo di confidenza. Infine è stata calcolata la **stima dell'intervallo di confidenza** i valori sono stati salvati in __r1__ e __r2__, possiamo notare che l'intervallo di stima va da 22.51 a 24.03 e che il valore medio è compreso in questo intervallo.
 
-```{r echo=FALSE, eval = FALSE}
+```{r echo=FALSE}
 plotDensita("Densità di Student con n-1 gradi di libertà", 0.99, 0.01, limite)
 ```
 
@@ -649,7 +649,7 @@ Per determinare l'intervallo di confidenza per $\sigma^2$ con $\mu$ nota utilizz
 $$V_n = \sum_{i=1}^{n}\left ( \frac{X_i - \mu}{\sigma} \right )^2$$
 Essa dipende dal campione casuale e dal parametro non noto $\sigma^2$ ed è distribuita con la legge **$\chi^2$ con n gradi di libertà**.  
 Di seguito viene mostrato lo script R per calcolare l'intervallo di confidenza
-```{r eval = FALSE}
+```{r}
 varianza <- var(popolazioneAtleti$km)
 print(paste("varianza =", round(varianza, digits = 2)))
 alpha <- 1 - 0.95
@@ -666,7 +666,7 @@ print(paste("r1=", round(r1, digits = 2),
 
 Il grado di fiducia assegnato in questo caso è 0.95, in seguito è stata calcolata la densità con il metodo del **$\chi^2$ con n gradi di libertà** dove n è pari alla grandezza del campione(__size__). La densità è stata calcolata sia per il limite superiore che per quello inferiore, i risultati sono riportati nello script soprastante. Infine è stata calcolata la stima per dell'intervallo di confidenza di grado 0.95, l'intervallo va da 7.21 a 12.26 e la varianza(9.25) è compresa in tale intervallo. Di seguito viene riportato il grafico
 
-```{r echo=FALSE, eval = FALSE}
+```{r echo=FALSE}
 curve(dchisq(x, df= 6), from = 0, to = 12, axes = FALSE, ylim=c(0,0.15),
       xlab = "", ylab = "", main="Densità chiquadro con n gradi di libertà")
 text(4, 0.02, 0.95)
@@ -691,7 +691,7 @@ Per determinare un intervallo di confidenza da 1 a $\infty$ per la varianza nel 
 $$Q_n = \frac{(n-1)S^2_n}{\sigma^2} = \frac{1}{\sigma^2} \sum_{i=1}^{n}(X_i - \overline{X}_n)^2$$
 Questa variabile dipende dal campione e dal parametro non noto $\sigma^2$ ed è distribuita con la legge del $\chi^2$ con n-1 gradi di libertà.  
 Di seguito viene mostrato lo script per calcolare il limite superiore e inferiore per questo intervallo
-```{r eval = FALSE}
+```{r}
 alpha <- 1 - 0.95
 limInf <- qchisq(alpha/2, df = size-1)
 limSup <- qchisq(1 - alpha/2, df = size-1)
@@ -706,7 +706,7 @@ print(paste("r1=", round(r1, digits = 2),
 Il grado di fiducia è rimasto 0.95, il calcolo del limite inferiore e superiore è stato fatto con il metodo del $\chi^2$ con n-1 gradi di libertà, il limite inferiore è 82 mentre quello superiore è 139.78.   **L'intervallo di confidenza** va da 7.21 a 12.29, la varianza è di 9.24 quindi possiamo dire che anche in questo caso la varianza è compresa nell'intervallo.  
 Di seguito viene mostrato il grafico.
 
-```{r eval = FALSE, echo=FALSE}
+```{r echo=FALSE}
 curve(dchisq(x, df= 6), from = 0, to = 12, axes = FALSE, ylim=c(0,0.15),
       xlab = "", ylab = "", main="Densità chiquadro con n-1 gradi di libertà")
 text(4, 0.02, 0.95)
@@ -737,7 +737,7 @@ $A_{180} = 200, B_{230}=150$
 $\sigma^2_a= 14400, \sigma^2_a=6400$  
 Di seguito viene riportato lo script per calcolare la differenza dei valori medi
 
-```{r eval = FALSE}
+```{r}
 alpha <- 1-0.99
 zAmezzi <- qnorm(1-alpha/2, mean = 0, sd = 1)
 round(zAmezzi, digits = 2)
@@ -764,7 +764,7 @@ Formuliamo le ipotesi:
 
 Il $\chi^2$ test mira a riggettare $H_0$ al fine di accettare $H_1$.  
 Siamo intenzionati a verificare se il campione dell'altezza(espressa in cm) di 105 persone di venticinque anni sia adatto ad una distribuzione normale
-```{r eval = FALSE, warning=FALSE}
+```{r warning=FALSE}
 sample <- c(rep(165,15), rep(170, 25), rep(160, 10), rep(155, 25), rep(180, 30))
 n <- 105
 media <- mean(sample)
