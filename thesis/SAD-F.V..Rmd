@@ -105,14 +105,14 @@ Il grafico ci dice che la regione con il numero più alto di laureati triennali 
 showBar(rapMagistrali, regioni, "Rapporto Magistrale", rowRapporto, "topright")
 ```
 
-Il rapprto più alto viene registrato in ancora in Lombardia(15.08), il rapporto più basso viene registrato dalla Valle d'Aosta con un rapporto di laureati magistrali pari a 0.01.
+Il rapporto più alto viene registrato in ancora in Lombardia(15.08), il rapporto più basso viene registrato dalla Valle d'Aosta con un rapporto di laureati magistrali pari a 0.01.
 
 ## 2.3 Grafico del rapporto dei laureati a ciclo unico
 ```{r echo=FALSE}
 showBar(rapUnico, regioni, "Rapporto ciclo unico", rowRapporto,"topleft")
 ```
 
-La regione con il rapporto più alto è di nuovo la Campania con 11.68 mentre la regione con il rapproto più basso è la Valle d'Aosta con 0.01.
+La regione con il rapporto più alto è la Campania con 11.68 mentre la regione con il rapproto più basso è la Valle d'Aosta con 0.01.
 
 ## 2.4 Grafico del rapporto dei laureati con il vecchio ordinamento
 ```{r echo=FALSE}
@@ -179,7 +179,7 @@ slr <- lm(rapTriennali~rapMagistrali)
 print(slr)
 ```
 Possiamo notare che il coefficiente angolare è positivo quindi avremo una retta crescente.  
-Di seguito viene mostrato lo script fatto per mostrare lo scatterplot della retta di regressione, per una migliore visualizzazione i dati riguardanti i tassi triennali e magistrali sono stati scalati utilizzando la funzione **scale()**.
+Di seguito viene mostrato lo script fatto per mostrare lo scatterplot della retta di regressione, per una migliore visualizzazione i dati riguardanti i rapporti triennali e magistrali sono stati scalati utilizzando la funzione **scale()**.
 ```{r echo=TRUE}
 scaleTriennale <- scale(rapTriennali)
 scaleMagistrale <- scale(rapMagistrali)
@@ -292,12 +292,12 @@ Showbar prende in input:
 <!--TODO da aggiustare-->
 Analizzando il boxplot possiamo arrivare alle seguenti conclusioni:
 
-* i dati risultano avare una maggiore dispersione nella colonna dei laureati triennali
-* possiamo notare la compattezza dei dati relativi alle colonne dei laureati a ciclo unico e dei laureati con vecchio ordinamento
-* per i laureati magistrali la maggior parte dei dati si trova più in basso rispetto alla mediana
+* non ci sono outlier
+* per i laureati triennali, magistrali e a ciclo unico la maggior parte dei valori si trova sopra la mediana
+* i dati risultano avare una maggiore dispersione nella colonna dei laureati magistrali
 
 # 6. Analisi dei cluster
-L'analisi dei cluster è una metodologia che permette di raggruppare un campione ampio vari sottoinsiemi più piccoli detti cluster. L'obiettivo di questa analisi è quello di **raggruppare** fra loro elementi simili.
+L'analisi dei cluster è una metodologia che permette di raggruppare un campione ampio in vari sottoinsiemi più piccoli detti cluster. L'obiettivo di questa analisi è quello di **raggruppare** fra loro elementi simili.
 
 ## 6.1 Costruizione 
 Abbiamo detto che raggruppiamo in base alla **somiglianza** degli elementi, per calcolare questa somiglianza applichiamo i metodi delle distanze. Le distanze tra tutte le possibili coppie di unità vengono inserite in una matrice simmetrica _D_ di cardinalità _n x n_. Il metodo che che utilizzerò per calcolare le distanze è quello della **metrica Euclidea**.  
@@ -482,7 +482,7 @@ Conclusioni:
 * Altre misure di non omogeneità accettabili sono quelle con un valore superiore al 70% quindi oltre al metodo del legame singolo su 2 cluster non possiamo accettare neanche la misura ottunuta con il metodo del legame singolo su 3 cluster.
 
 # 7. Inferenza statistica
-Una indagine statisica si effettua su una popolazione che può essere finita o infinita, le caratteristiche della popolazione possono essere ottenute osservando la totalità della popolazione oppure un sottoinsieme di essa(un campione) se ci troviamo di fronte a una popolazione infita possiamo studiare le sue caratteristiche solamente attraverso un suo campione.  
+Una indagine statisica si effettua su una popolazione che può essere finita o infinita, le caratteristiche della popolazione possono essere ottenute osservando la totalità della popolazione oppure un sottoinsieme di essa(un campione) se ci troviamo di fronte a una popolazione infita possiamo studiarne le caratteristiche solamente attraverso un suo campione.  
 L'inferenza statistica ha il compito di estendere le caratteristiche osservate in un un campione a tutta la popolazione, il problema dell'inferenza statistica è quello di riuscire a studiare la popolazione attraverso un parametro non noto, l'inferenza statistica si basa su due metodi di indagine essi sono **stima dei parametri** e **verifica delle ipotesi**.  
 La stima dei parametri ha lo scopo di determinare i valori non noti delle caratteristiche di una popolazione come ad esempio media, mediana, varianza ecc... dai valori delle caratteristiche ricavati possiamo effettuare due tipi di stime, la **stima puntuale** dove stimiamo un paramentro non noto usando un singolo valore reale e la **stima per intervallo** dove si cerca di individuare un limite inferiore e un limite superiore(un intervallo) entro i quali sia compreso il parametro non noto con un certo **grado di fiducia**.  
 Per quanto riguarda la verifica delle ipotesi si definisce una ipotesi se un parametro non noto del campione è accettabile.  
@@ -504,7 +504,7 @@ $$f_X(x) = \frac{1}{\sigma \sqrt{2\pi }} exp\left \{ - \frac{(x - \mu)^2)}{2 \si
 popolazioneAtleti <- read.csv(file="../dataset/sample.csv", header=TRUE, sep=";")
 ```
 
-la densità di __popolazioneAtleti__ in viene calcolata dal seguente script R
+la densità di __popolazioneAtleti__ viene calcolata dal seguente script R
 
 ```{r}
 valMedio <- mean(popolazioneAtleti$km)
@@ -548,7 +548,7 @@ Conclusioni:
 * **75%** dei km è pari a 25.32 
 
 ## 7.2 Stima dei parametri non noti
-Possiamo stimare i parametri non noti con due metodi, **metodo dei momenti** **metodo della massima verosomiglianza**. Dato che vogliamo stimare i paramentri non noti di una distribuzione normale la scelta
+Possiamo stimare i parametri non noti con due metodi, **metodo dei momenti** e **metodo della massima verosomiglianza**. Dato che vogliamo stimare i paramentri non noti di una distribuzione normale la scelta
 del metodo stimatore è indifferente perchè entrambi i metodi ci porteranno allo stesso risultato.  
 Troviamo uno stimatore per il valore medio(media campionaria)$\mu$ e uno per la varianza $\sigma^2$
 
@@ -558,7 +558,7 @@ sigmaQ <- (length(popolazioneAtleti$km)-1) * var(popolazioneAtleti$km)/length(po
 ```
 
 ```{r echo=FALSE}
-print(paste("stimatore valore medio mu =", mu, ", stimatore varianza sigma^2 =", sigmaQ))
+print(paste("stimatore valore medio mu =", round(mu, digits = 2), ", stimatore varianza sigma^2 =", round(sigmaQ, digits = 2)))
 ```
 
 ## 7.3 Intervalli di confidenza
@@ -598,8 +598,7 @@ La variabile aleatoria che andiamo a considerare è: $$Z_n = \frac{\overline{X}_
 Di seguito viene riportato lo script R per determinare l'intervallo di confidenza
 
 ```{r}
-#grado di confidenza
-alpha <- 1 - 0.95
+alpha <- 1 - 0.95 #grado di confidenza
 limite <- qnorm(1 - alpha/2, mean = 0, sd = 1)
 size <- length(popolazioneAtleti$km)
 print(paste("limite inf. =", round(-limite, digits = 2),
@@ -638,7 +637,7 @@ print(paste("r1 =", round(r1, digits = 2),
       )
 ```
 
-Avendo aumentato i margini di accettazione(da 0.95 a 0.99) la diretta conseguenza sarà il fatto che i margini di rifiuto saranno più bassi. La ragione di accattazione va da -2.62 a 2.62, con una grado di fiducia molto alto la stima dell'intervallo di confidenza è più ampia infatti va da 22.51 a 24.03 e anche in questo caso il valore medio ricade nell'intervallo.  
+Avendo aumentato il margine di accettazione(da 0.95 a 0.99) la diretta conseguenza sarà il fatto che i margini di rifiuto saranno più bassi. La ragione di accattazione va da -2.62 a 2.62, con una grado di fiducia molto alto la stima dell'intervallo di confidenza è più ampia infatti va da 22.51 a 24.03 e anche in questo caso il valore medio ricade nell'intervallo.  
 Di seguito viene riportato il grafico della densità normale standard con i valori che riguardano il nostro intervallo di confidenza. Infine è stata calcolata la **stima dell'intervallo di confidenza** i valori sono stati salvati in __r1__ e __r2__, possiamo notare che l'intervallo di stima va da 22.51 a 24.03 e che il valore medio è compreso in questo intervallo.
 
 ```{r echo=FALSE}
@@ -665,7 +664,7 @@ print(paste("r1=", round(r1, digits = 2),
             "r2=", round(r2, digits = 2)))
 ```
 
-Il grado di fiducia assegnato in questo caso è 0.95, in seguito è stata calcolata la densità con il metodo del **$\chi^2$ con n gradi di libertà** dove n è pari alla grandezza del campione(__size__). La densità è stata calcolata sia per il limite superiore che per quello inferiore, i risultati sono riportati nello script soprastante. Infine è stata calcolata la stima per dell'intervallo di confidenza di grado 0.95, l'intervallo va da 7.21 a 12.26 e la varianza(9.25) è compresa in tale intervallo. Di seguito viene riportato il grafico
+Il grado di fiducia assegnato in questo caso è 0.95, in seguito è stata calcolata la densità con il metodo del **$\chi^2$ con n gradi di libertà** dove n è pari alla grandezza del campione(__size__). La densità è stata calcolata sia per il limite superiore che per quello inferiore, i risultati sono riportati nello script soprastante. Infine è stata calcolata la stima dell'intervallo di confidenza di grado 0.95, l'intervallo va da 7.21 a 12.26 e la varianza(9.25) è compresa nell'intervallo. Di seguito viene riportato il grafico
 
 ```{r echo=FALSE}
 curve(dchisq(x, df= 6), from = 0, to = 12, axes = FALSE, ylim=c(0,0.15),
