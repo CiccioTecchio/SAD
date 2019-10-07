@@ -83,7 +83,7 @@ row.names(dsRapporto) <- regioni
 kable(dsRapporto)
 ```
 
-Possiamo notare che la somma degli elementi su ogni colonna si avvicina di molto a 100, non è esattamento 100 per colpa dell'arrotondamento.
+Possiamo notare che la somma degli elementi su ogni colonna si avvicina di molto a 100, non è esattamente 100 causa arrotondamento.
 
 # 2. Grafici a barre
 Per una rapida visualizzazione dei dati si è deciso di mostrare i grafici a barre dei laureati nelle varie regioni d'Italia. I grafici verranno mostrati con la funzione scritta ad hoc **showBar**
